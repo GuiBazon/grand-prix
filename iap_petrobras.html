@@ -1,0 +1,1617 @@
+<h2 class="sr-only">
+  IAP — Inteligência de Acessibilidade Petrobras, sistema completo com
+  acessibilidade funcional
+</h2>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  :root {
+    --pb-blue: #003da5;
+    --pb-blue-d: #00297a;
+    --pb-blue-l: #e6edf8;
+    --pb-green: #009640;
+    --pb-green-d: #006e2e;
+    --pb-green-l: #e6f5ec;
+    --pb-yellow: #ffd100;
+    --pb-yellow-d: #b39200;
+    --pb-yellow-l: #fffbe6;
+    --bg: #f4f6fa;
+    --surface: #fff;
+    --surface2: #f0f3f8;
+    --text: #0d1a2e;
+    --text2: #3a4a60;
+    --text3: #6b7c96;
+    --border: #d0d9e8;
+    --border2: #b0bdd0;
+    --acc-green: #009640;
+    --acc-red: #c0392b;
+    --acc-warn: #e67e00;
+    --font-scale: 1;
+    --sidebar-w: 220px;
+  }
+  [data-theme="dark"] {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface2: #1a2333;
+    --text: #e8eef8;
+    --text2: #a0b0c8;
+    --text3: #6080a0;
+    --border: #2a3a50;
+    --border2: #3a4a60;
+    --pb-blue-l: #0a1a3a;
+    --pb-green-l: #0a1f14;
+  }
+  [data-contrast="high"] {
+    --bg: #000;
+    --surface: #000;
+    --surface2: #111;
+    --text: #fff;
+    --text2: #ffe000;
+    --text3: #aaa;
+    --border: #fff;
+    --border2: #ffe000;
+    --pb-blue: #4da6ff;
+    --pb-blue-l: #001833;
+    --pb-green: #00ff88;
+    --pb-green-l: #001a0a;
+    --pb-yellow: #ffe000;
+  }
+  [data-reduce-motion="true"] * {
+    animation: none !important;
+    transition: none !important;
+  }
+  body {
+    font-family: system-ui, sans-serif;
+    font-size: calc(14px * var(--font-scale));
+  }
+  #app {
+    background: var(--bg);
+    min-height: 640px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .topbar {
+    height: 52px;
+    background: var(--pb-blue);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .logo-text {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .logo-badge {
+    background: var(--pb-yellow);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--bg);
+  }
+  .user-card {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .user-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background: var(--surface2);
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--pb-blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .avatar.green {
+    background: var(--pb-green);
+  }
+  .avatar.yellow {
+    background: var(--pb-yellow);
+    color: #000;
+  }
+  .avatar.dark {
+    background: var(--pb-blue-d);
+  }
+  .uname {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .urole {
+    font-size: 10px;
+    color: var(--text3);
+  }
+  .nav-group {
+    padding: 8px 0 0;
+  }
+  .nav-label {
+    font-size: 10px;
+    color: var(--text3);
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text2);
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .nav-item.active {
+    background: var(--pb-blue-l);
+    color: var(--pb-blue);
+    border-left-color: var(--pb-blue);
+    font-weight: 600;
+  }
+  [data-contrast="high"] .nav-item.active {
+    background: #001833;
+    color: var(--pb-blue);
+    border-left-color: var(--pb-blue);
+  }
+  .nbadge {
+    margin-left: auto;
+    background: var(--acc-red);
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+  .nav-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 12px;
+  }
+  .profile-tabs {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .ptab {
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .ptab:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+  .ptab.sel {
+    background: var(--pb-yellow);
+    color: #000;
+    border-color: transparent;
+    font-weight: 700;
+  }
+  .pg-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .pg-sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .mlabel {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  .mval {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .msub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .mval.green {
+    color: var(--pb-green);
+  }
+  .mval.blue {
+    color: var(--pb-blue);
+  }
+  .mval.red {
+    color: var(--acc-red);
+  }
+  .mval.warn {
+    color: var(--acc-warn);
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title .accent {
+    width: 3px;
+    height: 14px;
+    background: var(--pb-blue);
+    border-radius: 2px;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .t-ok {
+    background: var(--pb-green-l);
+    color: var(--pb-green-d);
+  }
+  .t-warn {
+    background: #fff3e0;
+    color: #a05000;
+  }
+  .t-err {
+    background: #fde8e8;
+    color: var(--acc-red);
+  }
+  .t-info {
+    background: var(--pb-blue-l);
+    color: var(--pb-blue-d);
+  }
+  .t-gray {
+    background: var(--surface2);
+    color: var(--text3);
+  }
+  [data-contrast="high"] .t-ok {
+    background: #002200;
+    color: #00ff88;
+  }
+  [data-contrast="high"] .t-warn {
+    background: #2a1500;
+    color: #ffe000;
+  }
+  [data-contrast="high"] .t-err {
+    background: #2a0000;
+    color: #ff6060;
+  }
+  [data-contrast="high"] .t-info {
+    background: #001833;
+    color: #4da6ff;
+  }
+  [data-contrast="high"] .t-gray {
+    background: #111;
+    color: #aaa;
+  }
+  .trow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .trow:last-child {
+    border-bottom: none;
+  }
+  .bar-bg {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    margin-top: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--pb-blue);
+    transition: width 0.4s;
+  }
+  .alert-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border-left: 3px solid;
+  }
+  .a-crit {
+    background: #fde8e8;
+    border-color: var(--acc-red);
+  }
+  .a-warn {
+    background: #fff3e0;
+    border-color: var(--acc-warn);
+  }
+  .a-ok {
+    background: var(--pb-green-l);
+    border-color: var(--pb-green);
+  }
+  [data-contrast="high"] .a-crit {
+    background: #1a0000;
+  }
+  [data-contrast="high"] .a-warn {
+    background: #1a0a00;
+  }
+  [data-contrast="high"] .a-ok {
+    background: #001a08;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .d-red {
+    background: var(--acc-red);
+  }
+  .d-warn {
+    background: var(--acc-warn);
+  }
+  .d-green {
+    background: var(--pb-green);
+  }
+  .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 4px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+  }
+  .form-input:focus {
+    border-color: var(--pb-blue);
+    box-shadow: 0 0 0 2px var(--pb-blue-l);
+  }
+  .form-ta {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 80px;
+    resize: vertical;
+    outline: none;
+  }
+  .form-ta:focus {
+    border-color: var(--pb-blue);
+  }
+  .form-row {
+    margin-bottom: 14px;
+  }
+  .btn-p {
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--pb-blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-p:hover {
+    opacity: 0.88;
+  }
+  .btn-p.green {
+    background: var(--pb-green);
+  }
+  .btn-s {
+    padding: 8px 16px;
+    font-size: 13px;
+    background: var(--surface);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-s:hover {
+    background: var(--surface2);
+  }
+  .chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .chip.sel {
+    border-color: var(--pb-blue);
+    background: var(--pb-blue-l);
+    color: var(--pb-blue);
+    font-weight: 700;
+  }
+  [data-contrast="high"] .chip.sel {
+    background: #001833;
+    color: var(--pb-blue);
+  }
+  .chip-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .toggle-wrap:last-child {
+    border-bottom: none;
+  }
+  .tw-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .tw-desc {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 1px;
+  }
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .tslider {
+    position: absolute;
+    inset: 0;
+    background: var(--border2);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .tslider:before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+  }
+  .toggle input:checked + .tslider {
+    background: var(--pb-blue);
+  }
+  .toggle input:checked + .tslider:before {
+    transform: translateX(18px);
+  }
+  [data-contrast="high"] .toggle input:checked + .tslider {
+    background: var(--pb-green);
+  }
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .range-row input[type="range"] {
+    flex: 1;
+    accent-color: var(--pb-blue);
+  }
+  .range-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--pb-blue);
+    min-width: 38px;
+    text-align: right;
+  }
+  .sensor-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sensor-row:last-child {
+    border-bottom: none;
+  }
+  .pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .p-ok {
+    background: var(--pb-green);
+  }
+  .p-warn {
+    background: var(--acc-warn);
+  }
+  .p-err {
+    background: var(--acc-red);
+  }
+  .toast {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 9px 18px;
+    background: var(--pb-blue);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 99;
+  }
+  .toast.show {
+    opacity: 1;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: fixed;
+  }
+  th {
+    text-align: left;
+    padding: 7px 0;
+    font-weight: 700;
+    color: var(--text3);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  .acc-section {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 16px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .upload-zone {
+    border: 2px dashed var(--border2);
+    border-radius: 8px;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 12px;
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover {
+    border-color: var(--pb-blue);
+    color: var(--pb-blue);
+  }
+</style>
+
+<div id="app" role="main">
+  <div class="topbar" role="banner">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <svg width="28" height="28" viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="14" fill="#FFD100" />
+        <text
+          x="14"
+          y="19"
+          text-anchor="middle"
+          font-size="11"
+          font-weight="900"
+          fill="#003DA5"
+        >
+          P
+        </text>
+      </svg>
+      <span class="logo-text">IAP</span>
+      <span class="logo-badge">PETROBRAS</span>
+    </div>
+    <div
+      class="profile-tabs"
+      id="ptabs"
+      role="tablist"
+      aria-label="Selecione o perfil"
+    >
+      <button
+        class="ptab sel"
+        role="tab"
+        onclick="switchProfile('funcionario', this)"
+        aria-selected="true"
+      >
+        Funcionário
+      </button>
+      <button
+        class="ptab"
+        role="tab"
+        onclick="switchProfile('gestor', this)"
+        aria-selected="false"
+      >
+        Gestor
+      </button>
+      <button
+        class="ptab"
+        role="tab"
+        onclick="switchProfile('rh', this)"
+        aria-selected="false"
+      >
+        RH
+      </button>
+      <button
+        class="ptab"
+        role="tab"
+        onclick="switchProfile('admin', this)"
+        aria-selected="false"
+      >
+        Admin
+      </button>
+    </div>
+    <div
+      id="user-av"
+      style="
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--pb-yellow);
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 900;
+        cursor: pointer;
+        margin-left: 8px;
+      "
+      title="Perfil do usuário"
+    >
+      MF
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="sidebar" aria-label="Navegação principal" id="sidebar"></nav>
+    <div class="content" id="content" role="main" tabindex="0"></div>
+  </div>
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+</div>
+
+<script>
+  const P = {
+    funcionario: {
+      name: "Maria Ferreira",
+      initials: "MF",
+      role: "Funcionária · Engenharia",
+      avClass: "",
+      nav: [
+        { i: "⊙", l: "Início", p: "dash" },
+        { i: "⊞", l: "Minhas demandas", p: "demandas", b: 2 },
+        { i: "⊕", l: "Nova demanda", p: "nova" },
+        { i: "⊗", l: "Recursos", p: "recursos" },
+        { i: "⊛", l: "Acessibilidade", p: "acc" },
+      ],
+    },
+    gestor: {
+      name: "Carlos Lima",
+      initials: "CL",
+      role: "Gestor · Operações",
+      avClass: "green",
+      nav: [
+        { i: "⊙", l: "Painel do setor", p: "dash" },
+        { i: "⊞", l: "Demandas", p: "demandas", b: 5 },
+        { i: "⊟", l: "Alertas", p: "alertas", b: 1 },
+        { i: "⊠", l: "Relatórios", p: "relatorios" },
+        { i: "⊛", l: "Acessibilidade", p: "acc" },
+      ],
+    },
+    rh: {
+      name: "Ana Paula",
+      initials: "AP",
+      role: "Analista · RH",
+      avClass: "yellow",
+      nav: [
+        { i: "⊙", l: "Painel RH", p: "dash" },
+        { i: "⊞", l: "Todas demandas", p: "demandas" },
+        { i: "⊕", l: "Funcionários", p: "funcionarios" },
+        { i: "⊠", l: "Relatórios", p: "relatorios" },
+        { i: "⊛", l: "Acessibilidade", p: "acc" },
+      ],
+    },
+    admin: {
+      name: "Roberto Souza",
+      initials: "RS",
+      role: "Administrador · TI",
+      avClass: "dark",
+      nav: [
+        { i: "⊙", l: "Visão geral", p: "dash" },
+        { i: "⊞", l: "Sensores", p: "sensores" },
+        { i: "⊟", l: "Usuários", p: "usuarios" },
+        { i: "⊕", l: "Auditoria", p: "auditoria" },
+        { i: "⊛", l: "Acessibilidade", p: "acc" },
+      ],
+    },
+  };
+
+  let cur = "funcionario",
+    page = "dash";
+  let ACC = {
+    dark: false,
+    contrast: false,
+    font: 100,
+    narr: 100,
+    libras: false,
+    motion: false,
+  };
+
+  function applyAcc() {
+    const root = document.getElementById("app");
+    root.setAttribute("data-theme", ACC.dark ? "dark" : "light");
+    root.setAttribute("data-contrast", ACC.contrast ? "high" : "normal");
+    root.setAttribute("data-reduce-motion", ACC.motion ? "true" : "false");
+    document.body.style.fontSize = ACC.font + "%";
+    const fs = ACC.font / 100;
+    root.style.setProperty("--font-scale", fs);
+  }
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  function switchProfile(p, btn) {
+    cur = p;
+    page = "dash";
+    document.querySelectorAll(".ptab").forEach((b) => {
+      b.classList.remove("sel");
+      b.setAttribute("aria-selected", "false");
+    });
+    btn.classList.add("sel");
+    btn.setAttribute("aria-selected", "true");
+    const av = document.getElementById("user-av");
+    av.textContent = P[p].initials;
+    renderSidebar();
+    renderContent();
+  }
+
+  function go(pg) {
+    page = pg;
+    renderSidebar();
+    renderContent();
+  }
+
+  function renderSidebar() {
+    const prof = P[cur];
+    document.getElementById("sidebar").innerHTML = `
+    <div class="user-card">
+      <div class="user-inner">
+        <div class="avatar ${prof.avClass}">${prof.initials}</div>
+        <div><div class="uname">${prof.name}</div><div class="urole">${prof.role}</div></div>
+      </div>
+    </div>
+    <div class="nav-group">
+      ${prof.nav
+        .map(
+          (n) => `
+        <div class="nav-item${page === n.p ? " active" : ""}" onclick="go('${n.p}')" role="menuitem" tabindex="0" aria-current="${page === n.p ? "page" : "false"}">
+          <span style="font-size:15px">${n.i}</span>
+          <span style="flex:1">${n.l}</span>
+          ${n.b ? `<span class="nbadge" aria-label="${n.b} pendentes">${n.b}</span>` : ""}
+        </div>`,
+        )
+        .join("")}
+    </div>
+    <div style="margin-top:auto;padding:8px 0">
+      <div class="nav-sep"></div>
+      <div class="nav-item" onclick="toast('Sessão encerrada')" tabindex="0">
+        <span style="font-size:14px">↩</span><span>Sair</span>
+      </div>
+    </div>`;
+  }
+
+  function renderContent() {
+    const fns = {
+      dash: rDash,
+      demandas: rDemandas,
+      nova: rNova,
+      recursos: rRecursos,
+      acc: rAcc,
+      alertas: rAlertas,
+      relatorios: rRelatorios,
+      funcionarios: rFuncionarios,
+      sensores: rSensores,
+      usuarios: rUsuarios,
+      auditoria: rAuditoria,
+    };
+    document.getElementById("content").innerHTML = (fns[page] || rDash)();
+    initPage();
+  }
+
+  function initPage() {
+    if (page === "acc") {
+      const s = ACC;
+      setTog("tog-dark", s.dark);
+      setTog("tog-contrast", s.contrast);
+      setTog("tog-libras", s.libras);
+      setTog("tog-motion", s.motion);
+      setRange("rng-font", s.font, "val-font", "%");
+      setRange("rng-narr", s.narr, "val-narr", "%");
+    }
+  }
+  function setTog(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.checked = val;
+  }
+  function setRange(id, val, vid, suf) {
+    const el = document.getElementById(id),
+      vl = document.getElementById(vid);
+    if (el) el.value = val;
+    if (vl) vl.textContent = val + suf;
+  }
+
+  function rDash() {
+    if (cur === "funcionario")
+      return `
+    <div class="pg-title">Bom dia, Maria</div>
+    <div class="pg-sub">Você tem 2 demandas em andamento · ${new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}</div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Demandas abertas</div><div class="mval blue">2</div><div class="msub">1 aguardando resposta</div></div>
+      <div class="metric"><div class="mlabel">Resolvidas (30d)</div><div class="mval green">7</div><div class="msub">Dentro do prazo</div></div>
+      <div class="metric"><div class="mlabel">Tempo médio</div><div class="mval">3,2d</div><div class="msub">De resolução</div></div>
+      <div class="metric"><div class="mlabel">Recursos ativos</div><div class="mval">4</div><div class="msub">Disponíveis</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Últimas demandas</div>
+        <div class="trow"><div class="avatar" style="width:28px;height:28px;font-size:9px;background:var(--acc-warn)">!</div><div style="flex:1;margin-left:4px"><div style="font-size:12px;font-weight:600;color:var(--text)">Rampa bloqueada — Bloco C</div><div style="font-size:10px;color:var(--text3)">Aberta há 2 dias</div></div><span class="tag t-warn">Em análise</span></div>
+        <div class="trow"><div class="avatar" style="width:28px;height:28px;font-size:9px">★</div><div style="flex:1;margin-left:4px"><div style="font-size:12px;font-weight:600;color:var(--text)">Intérprete LIBRAS para reunião</div><div style="font-size:10px;color:var(--text3)">Aberta há 5 dias</div></div><span class="tag t-info">Aguardando</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Ações rápidas</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-p" onclick="go('nova')" style="text-align:left">＋ Registrar nova demanda</button>
+          <button class="btn-s" onclick="go('recursos')" style="text-align:left">◑ Recursos de acessibilidade</button>
+          <button class="btn-s" onclick="go('acc')" style="text-align:left">⚙ Configurar interface</button>
+        </div>
+      </div>
+    </div>`;
+
+    if (cur === "gestor")
+      return `
+    <div class="pg-title">Painel — Operações</div>
+    <div class="pg-sub">Atualizado há 3 minutos</div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Demandas abertas</div><div class="mval blue">14</div><div class="msub">+3 esta semana</div></div>
+      <div class="metric"><div class="mlabel">Resolvidas (mês)</div><div class="mval green">31</div><div class="msub">Meta: 28 ✓</div></div>
+      <div class="metric"><div class="mlabel">Tempo médio</div><div class="mval">2,8d</div><div class="msub">Abaixo da meta</div></div>
+      <div class="metric"><div class="mlabel">SLA cumprido</div><div class="mval green">89%</div><div class="msub">Meta: 85%</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Demandas por tipo</div>
+        ${[
+          ["Rampas e acessos", 72],
+          ["Intérprete LIBRAS", 45],
+          ["Equipamentos", 38],
+          ["Documentação", 28],
+          ["Outros", 17],
+        ]
+          .map(
+            ([l, v]) =>
+              `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"><span>${l}</span><span style="font-weight:700;color:var(--pb-blue)">${v}%</span></div><div class="bar-bg"><div class="bar-fill" style="width:${v}%"></div></div></div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Alertas ativos</div>
+        <div class="alert-row a-crit"><div class="dot d-red"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">Elevador B2 fora de operação</div><div style="font-size:10px;color:var(--text3)">Sensor detectou falha há 40min</div></div></div>
+        <div class="alert-row a-warn"><div class="dot d-warn"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">Rampa C3 com obstáculo</div><div style="font-size:10px;color:var(--text3)">IA detectou bloqueio via câmera</div></div></div>
+        <div class="alert-row a-ok"><div class="dot d-green"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">Banheiro adaptado A1 — OK</div><div style="font-size:10px;color:var(--text3)">Última vistoria: hoje 08:14</div></div></div>
+      </div>
+    </div>`;
+
+    if (cur === "rh")
+      return `
+    <div class="pg-title">Painel de Inclusão — RH</div>
+    <div class="pg-sub">Visão consolidada de todos os setores</div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Funcionários PCD</div><div class="mval blue">284</div><div class="msub">12,4% do quadro</div></div>
+      <div class="metric"><div class="mlabel">Demandas abertas</div><div class="mval warn">47</div><div class="msub">Todos os setores</div></div>
+      <div class="metric"><div class="mlabel">Setores críticos</div><div class="mval red">3</div><div class="msub">Abaixo do SLA</div></div>
+      <div class="metric"><div class="mlabel">Índice de inclusão</div><div class="mval">7,4</div><div class="msub">Meta: 8,0</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Tipos de deficiência</div>
+        ${[
+          ["Física / motora", 61],
+          ["Visual", 38],
+          ["Auditiva (LIBRAS)", 29],
+          ["Intelectual", 18],
+          ["Múltipla", 14],
+        ]
+          .map(
+            ([l, v]) =>
+              `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"><span>${l}</span><span style="font-weight:700;color:var(--pb-blue)">${v}</span></div><div class="bar-bg"><div class="bar-fill" style="width:${Math.round((v / 61) * 100)}%"></div></div></div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Setores com mais demandas</div>
+        ${[
+          ["Operações", 14, "t-err"],
+          ["Manutenção", 11, "t-warn"],
+          ["Administrativo", 9, "t-info"],
+          ["Engenharia", 7, "t-gray"],
+          ["Logística", 6, "t-gray"],
+        ]
+          .map(
+            ([l, v, t]) =>
+              `<div class="trow"><div style="flex:1;font-size:12px;color:var(--text)">${l}</div><span class="tag ${t}">${v} demandas</span></div>`,
+          )
+          .join("")}
+      </div>
+    </div>`;
+
+    return `
+    <div class="pg-title">Visão geral do sistema</div>
+    <div class="pg-sub">Status em tempo real · Admin</div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Usuários ativos</div><div class="mval blue">1.247</div><div class="msub">Online agora: 38</div></div>
+      <div class="metric"><div class="mlabel">Sensores online</div><div class="mval green">142/148</div><div class="msub">6 com alerta</div></div>
+      <div class="metric"><div class="mlabel">Uptime</div><div class="mval green">99,8%</div><div class="msub">Últimos 30 dias</div></div>
+      <div class="metric"><div class="mlabel">Chamadas de IA hoje</div><div class="mval">3.412</div><div class="msub">Processadas</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Status dos serviços</div>
+        ${[
+          ["API backend", "Operacional", "t-ok"],
+          ["Microsserviço IA — visão", "Operacional", "t-ok"],
+          ["STT / TTS (Whisper)", "Operacional", "t-ok"],
+          ["WebSocket / alertas", "Operacional", "t-ok"],
+          ["Sensor MQTT broker", "1 falha", "t-warn"],
+          ["Banco de dados", "Operacional", "t-ok"],
+        ]
+          .map(
+            ([l, s, t]) =>
+              `<div class="trow"><div style="flex:1;font-size:12px;color:var(--text)">${l}</div><span class="tag ${t}">${s}</span></div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="accent"></span>Últimas ações</div>
+        ${[
+          ["IA classificou 12 demandas", "há 2 min"],
+          ["Alerta: sensor E-07 offline", "há 8 min"],
+          ["Relatório mensal gerado (RH)", "há 31 min"],
+          ["Novo usuário: juliana.costa", "há 1h"],
+          ["Backup automático concluído", "há 3h"],
+        ]
+          .map(
+            ([a, t]) =>
+              `<div class="trow"><div style="flex:1;font-size:12px;color:var(--text)">${a}</div><span style="font-size:10px;color:var(--text3)">${t}</span></div>`,
+          )
+          .join("")}
+      </div>
+    </div>`;
+  }
+
+  function rDemandas() {
+    const all = [
+      {
+        id: "#1042",
+        t: "Rampa bloqueada — Bloco C",
+        tipo: "Rampa",
+        s: "Em análise",
+        tag: "t-warn",
+        a: "Maria F.",
+        d: "12/07",
+      },
+      {
+        id: "#1039",
+        t: "Intérprete LIBRAS para reunião",
+        tipo: "LIBRAS",
+        s: "Aguardando",
+        tag: "t-info",
+        a: "João S.",
+        d: "09/07",
+      },
+      {
+        id: "#1035",
+        t: "Elevador B2 — botão inacessível",
+        tipo: "Equipamento",
+        s: "Em andamento",
+        tag: "t-warn",
+        a: "Carla M.",
+        d: "07/07",
+      },
+      {
+        id: "#1028",
+        t: "Laudo ergonômico",
+        tipo: "Ergonomia",
+        s: "Resolvida",
+        tag: "t-ok",
+        a: "Pedro L.",
+        d: "01/07",
+      },
+      {
+        id: "#1021",
+        t: "Piso tátil danificado — corredor 3",
+        tipo: "Infraestrutura",
+        s: "Resolvida",
+        tag: "t-ok",
+        a: "Ana K.",
+        d: "28/06",
+      },
+    ];
+    return `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div class="pg-title">Demandas</div><div class="pg-sub">${all.length} registros encontrados</div></div>
+      ${cur === "funcionario" ? `<button class="btn-p" onclick="go('nova')">＋ Nova demanda</button>` : ""}
+    </div>
+    <div class="card">
+      <table><thead><tr>
+        <th style="width:60px">ID</th><th>Descrição</th><th style="width:80px">Tipo</th><th style="width:90px">Status</th><th style="width:55px">Data</th>
+      </tr></thead><tbody>
+        ${all
+          .map(
+            (
+              i,
+            ) => `<tr style="cursor:pointer" onclick="toast('Demanda ${i.id} aberta')">
+          <td style="color:var(--text3);font-size:11px">${i.id}</td>
+          <td><div style="font-weight:600;font-size:12px;color:var(--text)">${i.t}</div><div style="font-size:10px;color:var(--text3)">${i.a}</div></td>
+          <td><span class="tag t-gray">${i.tipo}</span></td>
+          <td><span class="tag ${i.tag}">${i.s}</span></td>
+          <td style="color:var(--text3);font-size:11px">${i.d}</td>
+        </tr>`,
+          )
+          .join("")}
+      </tbody></table>
+    </div>`;
+  }
+
+  function rNova() {
+    return `
+  <div class="pg-title">Nova demanda</div>
+  <div class="pg-sub">Preencha os dados da ocorrência</div>
+  <div class="card" style="max-width:520px">
+    <div class="form-row"><label class="form-label" for="sel-tipo">Tipo de demanda</label>
+      <select class="form-input" id="sel-tipo"><option>Rampa / acesso</option><option>Equipamento adaptado</option><option>Intérprete LIBRAS</option><option>Piso tátil</option><option>Banheiro adaptado</option><option>Ergonomia</option><option>Outro</option></select></div>
+    <div class="form-row"><label class="form-label" for="inp-local">Localização</label>
+      <input class="form-input" id="inp-local" type="text" placeholder="Ex: Bloco C, 2º andar, sala 214"></div>
+    <div class="form-row"><label class="form-label">Prioridade</label>
+      <div class="chip-row" id="prio-chips">
+        <span class="chip" onclick="selChip(this,'prio-chips')">Baixa</span>
+        <span class="chip sel" onclick="selChip(this,'prio-chips')">Média</span>
+        <span class="chip" onclick="selChip(this,'prio-chips')">Alta</span>
+        <span class="chip" onclick="selChip(this,'prio-chips')">Urgente</span>
+      </div></div>
+    <div class="form-row"><label class="form-label" for="ta-desc">Descrição detalhada</label>
+      <textarea class="form-ta" id="ta-desc" placeholder="Descreva a situação com o máximo de detalhes..."></textarea></div>
+    <div class="form-row"><label class="form-label">Evidência (foto ou áudio)</label>
+      <div class="upload-zone" onclick="toast('Seletor de arquivo aberto')" role="button" tabindex="0">
+        Clique para anexar foto ou áudio<br><span style="font-size:10px;color:var(--text3)">A IA analisará as imagens automaticamente</span>
+      </div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-p" onclick="toast('Demanda registrada com sucesso! IA iniciou análise.')">Registrar demanda</button>
+      <button class="btn-s" onclick="go('demandas')">Cancelar</button>
+    </div>
+  </div>`;
+  }
+
+  function rRecursos() {
+    return `
+  <div class="pg-title">Recursos de acessibilidade</div>
+  <div class="pg-sub">Serviços disponíveis para você</div>
+  <div class="grid2">
+    ${[
+      [
+        "⊕",
+        "Intérprete de LIBRAS",
+        "Solicite um intérprete para reuniões e eventos",
+        "Solicitar",
+      ],
+      [
+        "⊗",
+        "Leitor de tela",
+        "Ative narração automática da interface",
+        "Ativar agora",
+        "go('acc')",
+      ],
+      [
+        "⊙",
+        "Guia em áudio",
+        "Orientação por voz para os espaços do campus",
+        "Acessar",
+      ],
+      [
+        "⊘",
+        "Transcrição automática",
+        "Converta áudio de reuniões em texto via IA",
+        "Usar",
+      ],
+      [
+        "⊞",
+        "Mapa de acessibilidade",
+        "Rotas acessíveis no campus Petrobras",
+        "Ver mapa",
+      ],
+      [
+        "⊟",
+        "Documentos adaptados",
+        "Versões em LIBRAS, áudio e alto contraste",
+        "Baixar",
+      ],
+    ]
+      .map(
+        ([ic, t, d, b, fn]) => `
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:24px;color:var(--pb-blue)">${ic}</div>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">${t}</div><div style="font-size:11px;color:var(--text3)">${d}</div></div>
+        <button class="btn-s" style="margin-top:auto" onclick="${fn || `toast('${t} — iniciado')`}">${b}</button>
+      </div>`,
+      )
+      .join("")}
+  </div>`;
+  }
+
+  function rAcc() {
+    return `
+  <div class="pg-title">Configurações de acessibilidade</div>
+  <div class="pg-sub">Preferências salvas por perfil de usuário</div>
+  <div style="max-width:500px">
+    <div class="card" style="margin-bottom:12px">
+      <div class="acc-section">Aparência e contraste</div>
+      <div class="toggle-wrap">
+        <div><div class="tw-label">Modo escuro</div><div class="tw-desc">Reduz brilho para menor fadiga visual</div></div>
+        <label class="toggle" aria-label="Modo escuro"><input type="checkbox" id="tog-dark" onchange="ACC.dark=this.checked;applyAcc();toast('Modo '+(this.checked?'escuro':'claro')+' ativado')"><span class="tslider"></span></label>
+      </div>
+      <div class="toggle-wrap">
+        <div><div class="tw-label">Alto contraste</div><div class="tw-desc">Máximo contraste para baixa visão — padrão WCAG AAA</div></div>
+        <label class="toggle" aria-label="Alto contraste"><input type="checkbox" id="tog-contrast" onchange="ACC.contrast=this.checked;applyAcc();toast('Alto contraste '+(this.checked?'ativado':'desativado'))"><span class="tslider"></span></label>
+      </div>
+      <div class="range-row" style="border-bottom:none">
+        <div style="flex:1"><div class="tw-label">Tamanho do texto</div><div class="tw-desc">Atual: <span id="val-font">100</span>%</div></div>
+        <input type="range" id="rng-font" min="80" max="160" step="5" style="width:120px" oninput="ACC.font=+this.value;document.getElementById('val-font').textContent=this.value;applyAcc()">
+        <span class="range-val" id="val-font-r">100%</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="acc-section">Narração e áudio</div>
+      <div class="toggle-wrap">
+        <div><div class="tw-label">Narração automática</div><div class="tw-desc">Lê o conteúdo da tela em voz alta (TTS)</div></div>
+        <label class="toggle" aria-label="Narração automática"><input type="checkbox" onchange="toast('Narração '+(this.checked?'ativada':'desativada'))"><span class="tslider"></span></label>
+      </div>
+      <div class="range-row" style="border-bottom:none">
+        <div style="flex:1"><div class="tw-label">Velocidade da narração</div><div class="tw-desc">Atual: <span id="val-narr">100</span>%</div></div>
+        <input type="range" id="rng-narr" min="60" max="200" step="10" style="width:120px" oninput="ACC.narr=+this.value;document.getElementById('val-narr').textContent=this.value">
+        <span class="range-val" id="val-narr-r">100%</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="acc-section">LIBRAS</div>
+      <div class="toggle-wrap" style="border-bottom:none">
+        <div><div class="tw-label">Player de LIBRAS</div><div class="tw-desc">Exibe vídeo em LIBRAS ao lado do conteúdo</div></div>
+        <label class="toggle" aria-label="Player de LIBRAS"><input type="checkbox" id="tog-libras" onchange="ACC.libras=this.checked;toast('Player LIBRAS '+(this.checked?'ativado':'desativado'))"><span class="tslider"></span></label>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="acc-section">Movimento</div>
+      <div class="toggle-wrap" style="border-bottom:none">
+        <div><div class="tw-label">Reduzir animações</div><div class="tw-desc">Para sensibilidade a movimento — padrão prefers-reduced-motion</div></div>
+        <label class="toggle" aria-label="Reduzir animações"><input type="checkbox" id="tog-motion" onchange="ACC.motion=this.checked;applyAcc();toast('Animações '+(this.checked?'reduzidas':'normais'))"><span class="tslider"></span></label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn-p" onclick="toast('Preferências salvas com sucesso!')">Salvar preferências</button>
+      <button class="btn-s" onclick="ACC={dark:false,contrast:false,font:100,narr:100,libras:false,motion:false};applyAcc();initPage();toast('Configurações restauradas ao padrão')">Restaurar padrão</button>
+    </div>
+  </div>`;
+  }
+
+  function rAlertas() {
+    return `
+  <div class="pg-title">Alertas do setor</div>
+  <div class="pg-sub">Atualizados em tempo real via sensores IoT</div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    ${[
+      [
+        "Elevador B2 fora de operação",
+        "Sensor detectou falha no motor. Equipe de manutenção acionada automaticamente pelo sistema.",
+        "Crítico",
+        "a-crit",
+        "d-red",
+        "há 40min",
+      ],
+      [
+        "Rampa C3 com obstáculo",
+        "IA identificou caixas bloqueando a rampa pela câmera de monitoramento. Foto registrada.",
+        "Atenção",
+        "a-warn",
+        "d-warn",
+        "há 1h 12min",
+      ],
+      [
+        "Banheiro adaptado F1 — vistoria vencida",
+        "Última vistoria há 32 dias. Política: máx. 30 dias. Agendar revisão.",
+        "Atenção",
+        "a-warn",
+        "d-warn",
+        "há 2h",
+      ],
+      [
+        "Piso tátil A2 reparado com sucesso",
+        "Equipe de manutenção concluiu o reparo. Demanda #1018 encerrada.",
+        "Resolvido",
+        "a-ok",
+        "d-green",
+        "há 3h 20min",
+      ],
+    ]
+      .map(
+        ([t, d, s, ac, dc, h]) => `
+      <div class="alert-row ${ac}">
+        <div class="dot ${dc}"></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <div style="font-size:12px;font-weight:700;color:var(--text)">${t}</div>
+            <span style="font-size:10px;color:var(--text3);flex-shrink:0">${h}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:3px">${d}</div>
+        </div>
+      </div>`,
+      )
+      .join("")}
+  </div>`;
+  }
+
+  function rRelatorios() {
+    return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div><div class="pg-title">Relatórios</div><div class="pg-sub">Geração automática por IA</div></div>
+    <button class="btn-p" onclick="toast('Gerando relatório com IA — aguarde...')">＋ Gerar com IA</button>
+  </div>
+  <div class="grid2">
+    ${[
+      [
+        "Relatório mensal — Julho 2025",
+        "Consolidado de todas as demandas por setor",
+        "Gerado em 01/07",
+        "t-ok",
+        "Disponível",
+      ],
+      [
+        "Relatório de SLA — Q2 2025",
+        "Cumprimento de prazo por setor e perfil",
+        "Gerado em 01/06",
+        "t-ok",
+        "Disponível",
+      ],
+      [
+        "Análise de padrões — 2025",
+        "Detecção de tendências pela IA preditiva",
+        "Gerado em 15/06",
+        "t-info",
+        "IA",
+      ],
+      [
+        "Diagnóstico de infraestrutura",
+        "Sensores e equipamentos em estado crítico",
+        "Em geração...",
+        "t-warn",
+        "Aguarde",
+      ],
+    ]
+      .map(
+        ([t, d, s, tag, l]) => `
+      <div class="card" style="cursor:pointer" onclick="toast('Abrindo: ${t}')">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">${t}</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:12px">${d}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:10px;color:var(--text3)">${s}</span>
+          <span class="tag ${tag}">${l}</span>
+        </div>
+      </div>`,
+      )
+      .join("")}
+  </div>`;
+  }
+
+  function rFuncionarios() {
+    return `
+  <div class="pg-title">Funcionários PCD</div>
+  <div class="pg-sub">284 funcionários · 12,4% do quadro</div>
+  <div class="card">
+    <table><thead><tr>
+      <th>Nome</th><th style="width:100px">Setor</th><th style="width:110px">Tipo PCD</th><th style="width:80px">Status</th>
+    </tr></thead><tbody>
+      ${[
+        ["Maria F.", "Engenharia", "Motora", "t-ok", "Ativo"],
+        ["João S.", "Operações", "Auditiva", "t-ok", "Ativo"],
+        ["Carla M.", "Administrativo", "Visual", "t-warn", "Atenção"],
+        ["Pedro L.", "Logística", "Motora", "t-ok", "Ativo"],
+        ["Ana K.", "TI", "Múltipla", "t-err", "Crítico"],
+      ]
+        .map(
+          ([n, s, t, tag, st]) => `
+        <tr style="cursor:pointer" onclick="toast('Perfil: ${n}')">
+          <td style="font-weight:600">${n}</td>
+          <td style="color:var(--text3)">${s}</td>
+          <td><span class="tag t-gray">${t}</span></td>
+          <td><span class="tag ${tag}">${st}</span></td>
+        </tr>`,
+        )
+        .join("")}
+    </tbody></table>
+  </div>`;
+  }
+
+  function rSensores() {
+    return `
+  <div class="pg-title">Monitoramento de sensores</div>
+  <div class="pg-sub">Atualização em tempo real via MQTT</div>
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="metric"><div class="mlabel">Total</div><div class="mval">148</div></div>
+    <div class="metric"><div class="mlabel">Online</div><div class="mval green">142</div></div>
+    <div class="metric"><div class="mlabel">Em alerta</div><div class="mval warn">4</div></div>
+    <div class="metric"><div class="mlabel">Offline</div><div class="mval red">2</div></div>
+  </div>
+  <div class="card">
+    <table><thead><tr>
+      <th style="width:60px">ID</th><th>Local</th><th style="width:90px">Tipo</th><th style="width:75px">Status</th><th style="width:80px">Atualizado</th>
+    </tr></thead><tbody>
+      ${[
+        [
+          "E-01",
+          "Elevador A — térreo",
+          "Elevador",
+          "t-ok",
+          "Online",
+          "há 1min",
+        ],
+        [
+          "E-07",
+          "Elevador B — 2º andar",
+          "Elevador",
+          "t-err",
+          "Offline",
+          "há 43min",
+        ],
+        [
+          "R-14",
+          "Rampa C3 — entrada",
+          "Câmera IA",
+          "t-warn",
+          "Alerta",
+          "há 12min",
+        ],
+        [
+          "P-03",
+          "Banheiro adaptado A1",
+          "Ocupação",
+          "t-ok",
+          "Online",
+          "há 2min",
+        ],
+        [
+          "P-08",
+          "Banheiro adaptado F1",
+          "Ocupação",
+          "t-ok",
+          "Online",
+          "há 4min",
+        ],
+      ]
+        .map(
+          ([id, l, t, tag, s, u]) => `
+        <tr>
+          <td style="color:var(--text3);font-size:11px">${id}</td>
+          <td style="color:var(--text)">${l}</td>
+          <td style="color:var(--text3)">${t}</td>
+          <td><span class="tag ${tag}">${s}</span></td>
+          <td style="color:var(--text3);font-size:11px">${u}</td>
+        </tr>`,
+        )
+        .join("")}
+    </tbody></table>
+  </div>`;
+  }
+
+  function rUsuarios() {
+    return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div><div class="pg-title">Usuários do sistema</div><div class="pg-sub">Gerenciamento de acessos</div></div>
+    <button class="btn-p" onclick="toast('Formulário de novo usuário aberto')">＋ Novo usuário</button>
+  </div>
+  <div class="card">
+    <table><thead><tr>
+      <th>Usuário</th><th style="width:100px">Setor</th><th style="width:90px">Perfil</th><th style="width:90px">Último acesso</th>
+    </tr></thead><tbody>
+      ${[
+        ["Maria Ferreira", "Engenharia", "Funcionário", "hoje"],
+        ["Carlos Lima", "Operações", "Gestor", "hoje"],
+        ["Ana Paula", "RH", "RH", "hoje"],
+        ["Roberto Souza", "TI", "Admin", "hoje"],
+        ["Juliana Costa", "Logística", "Funcionário", "ontem"],
+      ]
+        .map(
+          ([n, s, p, u]) => `
+        <tr style="cursor:pointer" onclick="toast('Editando usuário: ${n}')">
+          <td style="font-weight:600">${n}</td>
+          <td style="color:var(--text3)">${s}</td>
+          <td><span class="tag t-info">${p}</span></td>
+          <td style="color:var(--text3);font-size:11px">${u}</td>
+        </tr>`,
+        )
+        .join("")}
+    </tbody></table>
+  </div>`;
+  }
+
+  function rAuditoria() {
+    return `
+  <div class="pg-title">Log de auditoria</div>
+  <div class="pg-sub">Conformidade LGPD — todos os acessos registrados</div>
+  <div class="card">
+    <table><thead><tr>
+      <th style="width:50px">Hora</th><th>Ação</th><th style="width:120px">Usuário</th><th style="width:80px">IP</th>
+    </tr></thead><tbody>
+      ${[
+        ["10:41", "Login no sistema", "roberto.souza", "10.0.1.4"],
+        ["10:38", "Demanda #1042 atualizada", "carlos.lima", "10.0.2.11"],
+        ["10:31", "Relatório mensal exportado (PDF)", "ana.paula", "10.0.3.7"],
+        ["10:14", "Sensor E-07 marcado offline", "sistema", "—"],
+        ["09:58", "Usuário juliana.costa criado", "roberto.souza", "10.0.1.4"],
+        ["09:30", "Login no sistema", "carlos.lima", "10.0.2.11"],
+      ]
+        .map(
+          ([h, a, u, ip]) => `
+        <tr>
+          <td style="color:var(--text3);font-size:11px">${h}</td>
+          <td style="color:var(--text)">${a}</td>
+          <td style="color:var(--text3);font-size:11px">${u}</td>
+          <td style="color:var(--text3);font-size:11px">${ip}</td>
+        </tr>`,
+        )
+        .join("")}
+    </tbody></table>
+  </div>`;
+  }
+
+  function selChip(el, groupId) {
+    document
+      .getElementById(groupId)
+      .querySelectorAll(".chip")
+      .forEach((c) => c.classList.remove("sel"));
+    el.classList.add("sel");
+  }
+
+  renderSidebar();
+  renderContent();
+</script>

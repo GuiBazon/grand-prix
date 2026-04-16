@@ -1,0 +1,2790 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IAP — Inteligência de Acessibilidade Petrobras</title>
+    <style>
+      :root {
+        --pb-blue: #003da5;
+        --pb-blue-d: #002878;
+        --pb-blue-l: #e8f0fb;
+        --pb-green: #009640;
+        --pb-green-d: #006e2e;
+        --pb-green-l: #e6f5ec;
+        --pb-yellow: #ffd100;
+        --pb-yellow-d: #b39200;
+        --bg: #f0f4fa;
+        --surface: #ffffff;
+        --surface2: #f0f4fa;
+        --text: #0d1a2e;
+        --text2: #3a4a60;
+        --text3: #6b7c96;
+        --border: #d0d9e8;
+        --radius: 10px;
+        --sidebar: 230px;
+        --fscale: 1;
+        --narr-speed: 1;
+      }
+      [data-theme="dark"] {
+        --bg: #09111f;
+        --surface: #111c2e;
+        --surface2: #182236;
+        --text: #e8f0fb;
+        --text2: #9ab0cc;
+        --text3: #5a7090;
+        --border: #243448;
+        --pb-blue-l: #0a1e3d;
+        --pb-green-l: #0a2018;
+      }
+      [data-contrast="high"] {
+        --bg: #000000;
+        --surface: #0a0a0a;
+        --surface2: #111111;
+        --text: #ffffff;
+        --text2: #ffd100;
+        --text3: #cccccc;
+        --border: #ffffff;
+        --pb-blue: #5aadff;
+        --pb-blue-l: #001830;
+        --pb-blue-d: #003870;
+        --pb-green: #00e060;
+        --pb-green-l: #001a08;
+        --pb-yellow: #ffd100;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: calc(14px * var(--fscale));
+        transition:
+          background 0.3s,
+          color 0.3s;
+        min-height: 100vh;
+      }
+      /* TOPBAR */
+      #topbar {
+        height: 54px;
+        background: var(--pb-blue);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 3px solid var(--pb-yellow);
+      }
+      .logo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        background: var(--pb-yellow);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+        color: var(--pb-blue);
+      }
+      .logo-text {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+      }
+      .logo-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 1px;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .ptabs {
+        display: flex;
+        gap: 4px;
+      }
+      .ptab {
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: rgba(255, 255, 255, 0.8);
+        transition: all 0.15s;
+        letter-spacing: 0.2px;
+      }
+      .ptab:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+      }
+      .ptab.active {
+        background: var(--pb-yellow);
+        color: var(--pb-blue);
+        border-color: transparent;
+      }
+      .topbar-user {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--pb-yellow);
+        color: var(--pb-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 900;
+        cursor: pointer;
+        margin-left: 6px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      /* LAYOUT */
+      #layout {
+        display: flex;
+        min-height: calc(100vh - 54px);
+      }
+      /* SIDEBAR */
+      #sidebar {
+        width: var(--sidebar);
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        position: sticky;
+        top: 54px;
+        height: calc(100vh - 54px);
+        overflow-y: auto;
+      }
+      .user-block {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .user-inner {
+        background: var(--surface2);
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+      .av-blue {
+        background: var(--pb-blue);
+        color: #fff;
+      }
+      .av-green {
+        background: var(--pb-green);
+        color: #fff;
+      }
+      .av-yellow {
+        background: var(--pb-yellow);
+        color: var(--pb-blue);
+      }
+      .av-dark {
+        background: #0d1a2e;
+        color: #fff;
+      }
+      [data-contrast="high"] .av-blue {
+        border: 2px solid #fff;
+      }
+      .uname {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.3;
+      }
+      .urole {
+        font-size: 10px;
+        color: var(--text3);
+      }
+      .nav-section {
+        padding: 14px 14px 4px;
+        font-size: 10px;
+        color: var(--text3);
+        font-weight: 700;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 14px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text2);
+        border-left: 3px solid transparent;
+        transition: all 0.15s;
+        user-select: none;
+      }
+      .nav-item:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: var(--pb-blue-l);
+        color: var(--pb-blue);
+        border-left-color: var(--pb-blue);
+        font-weight: 700;
+      }
+      [data-contrast="high"] .nav-item.active {
+        background: #001830;
+      }
+      .nav-icon {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+      }
+      .nbadge {
+        margin-left: auto;
+        background: #c0392b;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 12px;
+      }
+      .nav-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 8px 12px;
+      }
+      /* CONTENT */
+      #content {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+      }
+      /* CARDS / UI */
+      .pg-header {
+        margin-bottom: 20px;
+      }
+      .pg-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1.2;
+      }
+      .pg-sub {
+        font-size: 13px;
+        color: var(--text3);
+        margin-top: 3px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+      }
+      .card-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .card-accent {
+        width: 4px;
+        height: 16px;
+        background: var(--pb-blue);
+        border-radius: 2px;
+      }
+      .card-accent.green {
+        background: var(--pb-green);
+      }
+      .card-accent.yellow {
+        background: var(--pb-yellow);
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .grid4 {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      /* METRICS */
+      .metric {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        border-top: 3px solid var(--pb-blue);
+      }
+      .metric.green {
+        border-top-color: var(--pb-green);
+      }
+      .metric.yellow {
+        border-top-color: var(--pb-yellow);
+      }
+      .metric.red {
+        border-top-color: #c0392b;
+      }
+      .mlabel {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+      }
+      .mval {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--text);
+        line-height: 1;
+      }
+      .mval.blue {
+        color: var(--pb-blue);
+      }
+      .mval.green {
+        color: var(--pb-green);
+      }
+      .mval.yellow {
+        color: var(--pb-yellow-d);
+      }
+      .mval.red {
+        color: #c0392b;
+      }
+      .mval.warn {
+        color: #b36000;
+      }
+      .msub {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 4px;
+      }
+      /* TAGS */
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+      }
+      .t-ok {
+        background: var(--pb-green-l);
+        color: var(--pb-green-d);
+      }
+      .t-warn {
+        background: #fff3e0;
+        color: #a05000;
+      }
+      .t-err {
+        background: #fde8e8;
+        color: #c0392b;
+      }
+      .t-info {
+        background: var(--pb-blue-l);
+        color: var(--pb-blue-d);
+      }
+      .t-gray {
+        background: var(--surface2);
+        color: var(--text3);
+        border: 1px solid var(--border);
+      }
+      .t-yellow {
+        background: #fffbe6;
+        color: var(--pb-yellow-d);
+      }
+      [data-contrast="high"] .t-ok {
+        background: #002200;
+        color: #00e060;
+      }
+      [data-contrast="high"] .t-warn {
+        background: #2a1000;
+        color: #ffd100;
+      }
+      [data-contrast="high"] .t-err {
+        background: #2a0000;
+        color: #ff6060;
+      }
+      [data-contrast="high"] .t-info {
+        background: #001830;
+        color: #5aadff;
+      }
+      [data-contrast="high"] .t-gray {
+        background: #111;
+        color: #ccc;
+        border-color: #666;
+      }
+      /* TABLE */
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .tbl th {
+        text-align: left;
+        padding: 8px 10px 10px;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        border-bottom: 2px solid var(--border);
+      }
+      .tbl td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+        vertical-align: middle;
+      }
+      .tbl tr:last-child td {
+        border-bottom: none;
+      }
+      .tbl tr:hover td {
+        background: var(--surface2);
+        cursor: pointer;
+      }
+      /* ROWS */
+      .trow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .trow:last-child {
+        border-bottom: none;
+      }
+      /* BARS */
+      .bar-bg {
+        height: 6px;
+        background: var(--surface2);
+        border-radius: 3px;
+        margin-top: 4px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        background: var(--pb-blue);
+        transition: width 0.4s ease;
+      }
+      .bar-fill.green {
+        background: var(--pb-green);
+      }
+      /* ALERTS */
+      .alert-box {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        border-left: 4px solid;
+      }
+      .a-crit {
+        background: #fde8e8;
+        border-color: #c0392b;
+      }
+      .a-warn {
+        background: #fff3e0;
+        border-color: #e67e00;
+      }
+      .a-ok {
+        background: var(--pb-green-l);
+        border-color: var(--pb-green);
+      }
+      .a-info {
+        background: var(--pb-blue-l);
+        border-color: var(--pb-blue);
+      }
+      [data-contrast="high"] .a-crit {
+        background: #1a0000;
+      }
+      [data-contrast="high"] .a-warn {
+        background: #1a0a00;
+      }
+      [data-contrast="high"] .a-ok {
+        background: #001a08;
+      }
+      [data-contrast="high"] .a-info {
+        background: #001030;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 5px;
+      }
+      .d-red {
+        background: #c0392b;
+      }
+      .d-warn {
+        background: #e67e00;
+      }
+      .d-green {
+        background: var(--pb-green);
+      }
+      .d-blue {
+        background: var(--pb-blue);
+      }
+      /* FORMS */
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text2);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 5px;
+      }
+      .form-input,
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 13px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: inherit;
+      }
+      .form-input:focus,
+      .form-select:focus,
+      .form-textarea:focus {
+        border-color: var(--pb-blue);
+        box-shadow: 0 0 0 3px var(--pb-blue-l);
+      }
+      .form-textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      /* BUTTONS */
+      .btn {
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-blue {
+        background: var(--pb-blue);
+        color: #fff;
+      }
+      .btn-blue:hover {
+        opacity: 0.88;
+      }
+      .btn-green {
+        background: var(--pb-green);
+        color: #fff;
+      }
+      .btn-green:hover {
+        opacity: 0.88;
+      }
+      .btn-yellow {
+        background: var(--pb-yellow);
+        color: var(--pb-blue);
+      }
+      .btn-yellow:hover {
+        opacity: 0.88;
+      }
+      .btn-ghost {
+        background: var(--surface);
+        color: var(--text2);
+        border: 1.5px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: var(--surface2);
+      }
+      /* CHIPS */
+      .chip {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1.5px solid var(--border);
+        background: var(--surface);
+        color: var(--text2);
+        transition: all 0.15s;
+        user-select: none;
+      }
+      .chip:hover {
+        border-color: var(--pb-blue);
+        color: var(--pb-blue);
+      }
+      .chip.sel {
+        border-color: var(--pb-blue);
+        background: var(--pb-blue-l);
+        color: var(--pb-blue);
+      }
+      [data-contrast="high"] .chip.sel {
+        background: #001830;
+      }
+      /* TOGGLES */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .toggle-row:last-child {
+        border-bottom: none;
+      }
+      .toggle-info {
+        flex: 1;
+        margin-right: 16px;
+      }
+      .toggle-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .toggle-desc {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 2px;
+      }
+      .switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .switch-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--border);
+        border-radius: 24px;
+        cursor: pointer;
+        transition: background 0.2s;
+        border: 1.5px solid var(--border);
+      }
+      .switch-slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: #fff;
+        border-radius: 50%;
+        top: 1px;
+        left: 1px;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      .switch input:checked + .switch-slider {
+        background: var(--pb-blue);
+        border-color: var(--pb-blue);
+      }
+      .switch input:checked + .switch-slider::before {
+        transform: translateX(20px);
+      }
+      [data-contrast="high"] .switch input:checked + .switch-slider {
+        background: var(--pb-green);
+        border-color: var(--pb-green);
+      }
+      .switch input:focus + .switch-slider {
+        outline: 3px solid var(--pb-yellow);
+      }
+      /* RANGE */
+      .range-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .range-row:last-child {
+        border-bottom: none;
+      }
+      input[type="range"] {
+        flex: 1;
+        accent-color: var(--pb-blue);
+        height: 4px;
+        cursor: pointer;
+      }
+      .range-val {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--pb-blue);
+        min-width: 42px;
+        text-align: right;
+      }
+      /* CHIP ROW */
+      .chip-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      /* UPLOAD */
+      .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 22px;
+        text-align: center;
+        cursor: pointer;
+        color: var(--text3);
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      .upload-zone:hover {
+        border-color: var(--pb-blue);
+        color: var(--pb-blue);
+        background: var(--pb-blue-l);
+      }
+      /* STATUS DOTS */
+      .pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .p-ok {
+        background: var(--pb-green);
+      }
+      .p-warn {
+        background: #e67e00;
+      }
+      .p-err {
+        background: #c0392b;
+      }
+      /* MODAL */
+      .modal-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        padding: 20px;
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        max-width: 480px;
+        width: 100%;
+        padding: 24px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      .modal-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-close {
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--text3);
+        background: none;
+        border: none;
+        color: var(--text3);
+      }
+      /* TOAST */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 12px 20px;
+        background: var(--pb-blue);
+        color: #fff;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 0.25s,
+          transform 0.25s;
+        pointer-events: none;
+        z-index: 300;
+        max-width: 320px;
+        border-left: 4px solid var(--pb-yellow);
+      }
+      #toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* NARRAÇÃO BANNER */
+      #narr-banner {
+        display: none;
+        background: var(--pb-green);
+        color: #fff;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        align-items: center;
+        gap: 10px;
+      }
+      #narr-banner.active {
+        display: flex;
+      }
+      /* LIBRAS BOX */
+      #libras-widget {
+        display: none;
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        width: 200px;
+        background: var(--surface);
+        border: 2px solid var(--pb-blue);
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: 150;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      #libras-widget.active {
+        display: block;
+      }
+      .libras-header {
+        background: var(--pb-blue);
+        color: #fff;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .libras-screen {
+        background: #0a1a2e;
+        height: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .libras-avatar {
+        font-size: 48px;
+        animation: libras-move 2s infinite ease-in-out;
+      }
+      @keyframes libras-move {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-8px) rotate(-5deg);
+        }
+        75% {
+          transform: translateY(-4px) rotate(5deg);
+        }
+      }
+      .libras-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        position: absolute;
+        bottom: 6px;
+        width: 100%;
+        text-align: center;
+      }
+      /* ACC SECTION TITLE */
+      .acc-section {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        padding: 14px 0 6px;
+        border-bottom: 2px solid var(--pb-yellow);
+        margin-bottom: 4px;
+      }
+      /* DEMANDA DETAIL */
+      .demanda-timeline {
+        border-left: 2px solid var(--border);
+        padding-left: 16px;
+        margin-left: 8px;
+      }
+      .dt-item {
+        position: relative;
+        margin-bottom: 14px;
+      }
+      .dt-item::before {
+        content: "";
+        position: absolute;
+        left: -21px;
+        top: 4px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--pb-blue);
+        border: 2px solid var(--surface);
+      }
+      .dt-item.ok::before {
+        background: var(--pb-green);
+      }
+      /* RESPONSIVIDADE */
+      @media (max-width: 700px) {
+        #sidebar {
+          display: none;
+        }
+        .grid4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      /* HOVER ROWS */
+      .hover-row {
+        transition: background 0.1s;
+        cursor: pointer;
+      }
+      .hover-row:hover {
+        background: var(--surface2);
+      }
+      /* SENSOR LIVE */
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      .live-dot {
+        animation: blink 1.4s infinite;
+      }
+      /* GAP UTILS */
+      .gap8 {
+        display: flex;
+        gap: 8px;
+      }
+      .gap12 {
+        display: flex;
+        gap: 12px;
+      }
+      .mt12 {
+        margin-top: 12px;
+      }
+      .mt16 {
+        margin-top: 16px;
+      }
+      .mb16 {
+        margin-bottom: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NARRAÇÃO ATIVA -->
+    <div id="narr-banner" role="alert">
+      <span>🔊</span>
+      <span id="narr-text">Narração ativa — lendo conteúdo</span>
+      <button
+        onclick="stopNarr()"
+        style="
+          margin-left: auto;
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          color: #fff;
+          padding: 3px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 11px;
+          font-weight: 700;
+        "
+      >
+        Parar
+      </button>
+    </div>
+
+    <!-- TOPBAR -->
+    <div id="topbar">
+      <div class="logo-wrap">
+        <div class="logo-icon">P</div>
+        <div>
+          <div class="logo-text">IAP · Petrobras</div>
+          <div class="logo-sub">Inteligência de Acessibilidade</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="ptabs">
+        <button
+          class="ptab active"
+          onclick="switchProfile('funcionario', this)"
+        >
+          Funcionário
+        </button>
+        <button class="ptab" onclick="switchProfile('gestor', this)">
+          Gestor
+        </button>
+        <button class="ptab" onclick="switchProfile('rh', this)">RH</button>
+        <button class="ptab" onclick="switchProfile('admin', this)">
+          Admin
+        </button>
+      </div>
+      <div class="topbar-user" id="topbar-av" title="Perfil">MF</div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div id="layout">
+      <nav id="sidebar" aria-label="Menu principal"></nav>
+      <main id="content" aria-live="polite"></main>
+    </div>
+
+    <!-- LIBRAS WIDGET -->
+    <div
+      id="libras-widget"
+      role="complementary"
+      aria-label="Intérprete de LIBRAS"
+    >
+      <div class="libras-header">
+        <span>🤟 LIBRAS</span>
+        <button
+          onclick="
+            document.getElementById('libras-widget').classList.remove('active')
+          "
+          style="
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+          "
+        >
+          ✕
+        </button>
+      </div>
+      <div class="libras-screen">
+        <div class="libras-avatar">🧑‍💼</div>
+        <div class="libras-sub">Interpretando em LIBRAS...</div>
+      </div>
+      <div
+        style="
+          padding: 8px;
+          background: var(--surface);
+          font-size: 10px;
+          color: var(--text3);
+          text-align: center;
+        "
+        id="libras-caption"
+      >
+        Aguardando leitura de tela
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      // ======= ESTADO GLOBAL =======
+      let CUR = "funcionario";
+      let PAGE = "dash";
+      let DEMANDAS = [
+        {
+          id: "#1042",
+          titulo: "Rampa bloqueada — Bloco C",
+          tipo: "Rampa",
+          prioridade: "Alta",
+          status: "Em análise",
+          statusTag: "t-warn",
+          autor: "Maria Ferreira",
+          setor: "Engenharia",
+          data: "12/07/2025",
+          desc: "A rampa de acesso ao Bloco C está completamente obstruída por materiais de construção. Funcionários com cadeira de rodas não conseguem acessar o setor.",
+          fotos: true,
+          historico: [
+            { d: "12/07 09:14", t: "Demanda registrada", ok: false },
+            {
+              d: "12/07 09:16",
+              t: "IA analisou foto — obstáculo confirmado",
+              ok: true,
+            },
+            {
+              d: "12/07 10:00",
+              t: "Roteamento automático → Manutenção",
+              ok: true,
+            },
+            {
+              d: "12/07 14:30",
+              t: "Equipe designada: Manutenção Civil",
+              ok: false,
+            },
+          ],
+        },
+        {
+          id: "#1039",
+          titulo: "Intérprete LIBRAS para reunião estratégica",
+          tipo: "LIBRAS",
+          prioridade: "Média",
+          status: "Aguardando",
+          statusTag: "t-info",
+          autor: "João Santos",
+          setor: "Operações",
+          data: "09/07/2025",
+          desc: "Reunião de planejamento trimestral em 15/07. Necessário intérprete de LIBRAS certificado para funcionário surdo.",
+          fotos: false,
+          historico: [
+            { d: "09/07 11:00", t: "Demanda registrada", ok: false },
+            {
+              d: "09/07 11:02",
+              t: "IA classificou prioridade como Média",
+              ok: true,
+            },
+            { d: "09/07 15:00", t: "Encaminhado ao RH", ok: false },
+          ],
+        },
+        {
+          id: "#1035",
+          titulo: "Elevador B2 — botão de acionamento inacessível",
+          tipo: "Equipamento",
+          prioridade: "Alta",
+          status: "Em andamento",
+          statusTag: "t-warn",
+          autor: "Carla Mendes",
+          setor: "Administrativo",
+          data: "07/07/2025",
+          desc: "O painel do elevador B2 não possui identificação em braille e os botões estão posicionados acima de 1,20m, fora do padrão NBR 9050.",
+          fotos: true,
+          historico: [
+            { d: "07/07 08:30", t: "Demanda registrada", ok: false },
+            {
+              d: "07/07 08:32",
+              t: "IA analisou imagem — não conformidade confirmada",
+              ok: true,
+            },
+            {
+              d: "07/07 09:00",
+              t: "Aberto chamado junto ao fornecedor",
+              ok: true,
+            },
+          ],
+        },
+        {
+          id: "#1028",
+          titulo: "Laudo ergonômico para estação de trabalho",
+          tipo: "Ergonomia",
+          prioridade: "Baixa",
+          status: "Resolvida",
+          statusTag: "t-ok",
+          autor: "Pedro Lima",
+          setor: "Logística",
+          data: "01/07/2025",
+          desc: "Funcionário com LER necessita adaptação da estação de trabalho com suporte para monitor e teclado ergonômico.",
+          fotos: false,
+          historico: [
+            { d: "01/07", t: "Demanda registrada", ok: false },
+            { d: "02/07", t: "Fisioterapeuta realizou vistoria", ok: true },
+            { d: "05/07", t: "Equipamentos instalados", ok: true },
+            { d: "08/07", t: "Demanda encerrada ✓", ok: true },
+          ],
+        },
+        {
+          id: "#1021",
+          titulo: "Piso tátil danificado — corredor 3 (acesso refeitório)",
+          tipo: "Infraestrutura",
+          prioridade: "Média",
+          status: "Resolvida",
+          statusTag: "t-ok",
+          autor: "Ana Keller",
+          setor: "Engenharia",
+          data: "28/06/2025",
+          desc: "Piso tátil de alerta e direcional danificado em trecho de 4m no corredor 3, criando risco para funcionários com deficiência visual.",
+          fotos: true,
+          historico: [
+            { d: "28/06", t: "Demanda registrada", ok: false },
+            { d: "29/06", t: "Vistoria técnica realizada", ok: true },
+            { d: "02/07", t: "Piso substituído e sinalizado", ok: true },
+            { d: "03/07", t: "Demanda encerrada ✓", ok: true },
+          ],
+        },
+      ];
+
+      let ACC = {
+        dark: false,
+        contrast: false,
+        font: 100,
+        narr: false,
+        narrSpeed: 1,
+        libras: false,
+        motion: false,
+      };
+
+      let narrSynth = window.speechSynthesis || null;
+      let narrUtterance = null;
+
+      // ======= PERFIS =======
+      const PROFILES = {
+        funcionario: {
+          name: "Maria Ferreira",
+          initials: "MF",
+          role: "Funcionária · Engenharia",
+          avClass: "av-blue",
+          nav: [
+            { ico: "🏠", label: "Início", page: "dash" },
+            { ico: "📋", label: "Minhas demandas", page: "demandas", badge: 2 },
+            { ico: "➕", label: "Nova demanda", page: "nova" },
+            { ico: "♿", label: "Recursos", page: "recursos" },
+            { ico: "⚙️", label: "Acessibilidade", page: "acc" },
+          ],
+        },
+        gestor: {
+          name: "Carlos Lima",
+          initials: "CL",
+          role: "Gestor · Operações",
+          avClass: "av-green",
+          nav: [
+            { ico: "📊", label: "Painel do setor", page: "dash" },
+            { ico: "📋", label: "Demandas", page: "demandas", badge: 5 },
+            { ico: "🚨", label: "Alertas", page: "alertas", badge: 1 },
+            { ico: "📈", label: "Relatórios", page: "relatorios" },
+            { ico: "⚙️", label: "Acessibilidade", page: "acc" },
+          ],
+        },
+        rh: {
+          name: "Ana Paula",
+          initials: "AP",
+          role: "Analista · RH",
+          avClass: "av-yellow",
+          nav: [
+            { ico: "👥", label: "Painel RH", page: "dash" },
+            { ico: "📋", label: "Todas demandas", page: "demandas" },
+            { ico: "🧑‍💼", label: "Funcionários", page: "funcionarios" },
+            { ico: "📈", label: "Relatórios", page: "relatorios" },
+            { ico: "⚙️", label: "Acessibilidade", page: "acc" },
+          ],
+        },
+        admin: {
+          name: "Roberto Souza",
+          initials: "RS",
+          role: "Administrador · TI",
+          avClass: "av-dark",
+          nav: [
+            { ico: "🖥️", label: "Visão geral", page: "dash" },
+            { ico: "📡", label: "Sensores IoT", page: "sensores" },
+            { ico: "👤", label: "Usuários", page: "usuarios" },
+            { ico: "🔒", label: "Auditoria", page: "auditoria" },
+            { ico: "⚙️", label: "Acessibilidade", page: "acc" },
+          ],
+        },
+      };
+
+      // ======= ACESSIBILIDADE =======
+      function applyAcc() {
+        const root = document.documentElement;
+        root.setAttribute("data-theme", ACC.dark ? "dark" : "");
+        root.setAttribute("data-contrast", ACC.contrast ? "high" : "");
+        root.setAttribute("data-reduce-motion", ACC.motion ? "true" : "");
+        document.body.style.fontSize = ACC.font + "%";
+        // narração
+        const banner = document.getElementById("narr-banner");
+        if (ACC.narr) {
+          banner.classList.add("active");
+        } else {
+          banner.classList.remove("active");
+          stopNarr();
+        }
+        // libras
+        const lw = document.getElementById("libras-widget");
+        if (ACC.libras) {
+          lw.classList.add("active");
+        } else {
+          lw.classList.remove("active");
+        }
+      }
+
+      function speak(text) {
+        if (!ACC.narr || !narrSynth) return;
+        narrSynth.cancel();
+        narrUtterance = new SpeechSynthesisUtterance(text);
+        narrUtterance.lang = "pt-BR";
+        narrUtterance.rate = ACC.narrSpeed;
+        narrUtterance.pitch = 1;
+        const voices = narrSynth.getVoices();
+        const ptVoice = voices.find((v) => v.lang.startsWith("pt"));
+        if (ptVoice) narrUtterance.voice = ptVoice;
+        narrSynth.speak(narrUtterance);
+        const narText = document.getElementById("narr-text");
+        if (narText)
+          narText.textContent =
+            "🔊 Lendo: " +
+            text.substring(0, 60) +
+            (text.length > 60 ? "..." : "");
+        const libCap = document.getElementById("libras-caption");
+        if (libCap)
+          libCap.textContent =
+            text.substring(0, 40) + (text.length > 40 ? "..." : "");
+      }
+
+      function stopNarr() {
+        if (narrSynth) narrSynth.cancel();
+        const narText = document.getElementById("narr-text");
+        if (narText) narText.textContent = "Narração ativa — aguardando";
+      }
+
+      // ======= TOAST =======
+      function toast(msg, type = "info") {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.style.background =
+          type === "ok"
+            ? "var(--pb-green)"
+            : type === "err"
+              ? "#c0392b"
+              : "var(--pb-blue)";
+        el.classList.add("show");
+        if (ACC.narr) speak(msg);
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove("show"), 3000);
+      }
+
+      // ======= PERFIL SWITCH =======
+      function switchProfile(p, btn) {
+        CUR = p;
+        PAGE = "dash";
+        document
+          .querySelectorAll(".ptab")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("topbar-av").textContent = PROFILES[p].initials;
+        render();
+        toast("Perfil: " + PROFILES[p].name);
+      }
+
+      function goPage(pg) {
+        PAGE = pg;
+        render();
+        if (ACC.narr) {
+          const titles = {
+            dash: "Painel principal",
+            demandas: "Lista de demandas",
+            nova: "Nova demanda",
+            recursos: "Recursos de acessibilidade",
+            acc: "Configurações de acessibilidade",
+            alertas: "Alertas do setor",
+            relatorios: "Relatórios",
+            funcionarios: "Funcionários",
+            sensores: "Sensores IoT",
+            usuarios: "Usuários",
+            auditoria: "Auditoria",
+          };
+          speak("Página: " + (titles[pg] || pg));
+        }
+      }
+
+      // ======= RENDER PRINCIPAL =======
+      function render() {
+        renderSidebar();
+        renderContent();
+      }
+
+      function renderSidebar() {
+        const p = PROFILES[CUR];
+        const html = `
+    <div class="user-block">
+      <div class="user-inner">
+        <div class="av ${p.avClass}">${p.initials}</div>
+        <div><div class="uname">${p.name}</div><div class="urole">${p.role}</div></div>
+      </div>
+    </div>
+    <div class="nav-section">Menu</div>
+    ${p.nav
+      .map(
+        (n) => `
+      <div class="nav-item ${PAGE === n.page ? "active" : ""}" onclick="goPage('${n.page}')" role="menuitem" tabindex="0" aria-label="${n.label}">
+        <span class="nav-icon">${n.ico}</span>
+        <span style="flex:1">${n.label}</span>
+        ${n.badge ? `<span class="nbadge" aria-label="${n.badge} novos">${n.badge}</span>` : ""}
+      </div>`,
+      )
+      .join("")}
+    <div style="flex:1"></div>
+    <div class="nav-sep"></div>
+    <div class="nav-item" onclick="toast('Sessão encerrada. Até logo, '+PROFILES[CUR].name+'!')" tabindex="0">
+      <span class="nav-icon">🚪</span><span>Sair</span>
+    </div>
+    <div style="padding:10px 14px;font-size:10px;color:var(--text3)">IAP v2.0 · Petrobras 2025</div>
+  `;
+        document.getElementById("sidebar").innerHTML = html;
+      }
+
+      function renderContent() {
+        const fns = {
+          dash: pDash,
+          demandas: pDemandas,
+          nova: pNova,
+          recursos: pRecursos,
+          acc: pAcc,
+          alertas: pAlertas,
+          relatorios: pRelatorios,
+          funcionarios: pFuncionarios,
+          sensores: pSensores,
+          usuarios: pUsuarios,
+          auditoria: pAuditoria,
+        };
+        document.getElementById("content").innerHTML = (fns[PAGE] || pDash)();
+        afterRender();
+      }
+
+      function afterRender() {
+        // restaura valores ACC nos controles de acessibilidade
+        if (PAGE === "acc") {
+          const setChk = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.checked = val;
+          };
+          const setRng = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val;
+          };
+          const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          };
+          setChk("sw-dark", ACC.dark);
+          setChk("sw-contrast", ACC.contrast);
+          setChk("sw-narr", ACC.narr);
+          setChk("sw-libras", ACC.libras);
+          setChk("sw-motion", ACC.motion);
+          setRng("rng-font", ACC.font);
+          setTxt("val-font", ACC.font + "%");
+          setRng("rng-narr", Math.round(ACC.narrSpeed * 100));
+          setTxt("val-narr", Math.round(ACC.narrSpeed * 100) + "%");
+        }
+        // narrar conteúdo da página
+        if (ACC.narr) {
+          const t = document.querySelector(".pg-title");
+          if (t) speak(t.textContent);
+        }
+        // sensores: inicia atualização ao vivo
+        if (PAGE === "sensores") startSensorLive();
+      }
+
+      // ======= PÁGINAS =======
+      function pDash() {
+        if (CUR === "funcionario")
+          return `
+    <div class="pg-header">
+      <div class="pg-title">Bom dia, Maria 👋</div>
+      <div class="pg-sub">Você tem 2 demandas em aberto · ${new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Demandas abertas</div><div class="mval blue">2</div><div class="msub">1 aguarda retorno</div></div>
+      <div class="metric green"><div class="mlabel">Resolvidas (30d)</div><div class="mval green">7</div><div class="msub">Dentro do prazo</div></div>
+      <div class="metric"><div class="mlabel">Tempo médio</div><div class="mval">3,2d</div><div class="msub">Última resolução</div></div>
+      <div class="metric yellow"><div class="mlabel">Recursos ativos</div><div class="mval yellow">4</div><div class="msub">Disponíveis para você</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="card-accent"></span>Minhas demandas recentes</div>
+        ${DEMANDAS.slice(0, 2)
+          .map(
+            (d) => `
+          <div class="trow hover-row" onclick="openDemanda('${d.id}')">
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:13px;color:var(--text)">${d.titulo}</div>
+              <div style="font-size:11px;color:var(--text3)">${d.tipo} · ${d.data}</div>
+            </div>
+            <span class="tag ${d.statusTag}">${d.status}</span>
+          </div>`,
+          )
+          .join("")}
+        <div class="mt12"><button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="goPage('demandas')">Ver todas as demandas →</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-accent yellow"></span>Ações rápidas</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn btn-blue" onclick="goPage('nova')" style="justify-content:center">➕ Registrar nova demanda</button>
+          <button class="btn btn-green" onclick="goPage('recursos')" style="justify-content:center">♿ Recursos de acessibilidade</button>
+          <button class="btn btn-ghost" onclick="goPage('acc')" style="justify-content:center">⚙️ Configurar acessibilidade</button>
+        </div>
+        <div class="alert-box a-info mt12">
+          <div class="dot d-blue"></div>
+          <div><div style="font-size:12px;font-weight:700;color:var(--text)">Dica de acessibilidade</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Ative a narração automática em ⚙️ para ouvir o conteúdo da tela em voz alta.</div></div>
+        </div>
+      </div>
+    </div>`;
+
+        if (CUR === "gestor")
+          return `
+    <div class="pg-header">
+      <div class="pg-title">Painel — Operações</div>
+      <div class="pg-sub">Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} · Setor com <b>14 demandas abertas</b></div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Demandas abertas</div><div class="mval blue">14</div><div class="msub">+3 nesta semana</div></div>
+      <div class="metric green"><div class="mlabel">Resolvidas (mês)</div><div class="mval green">31</div><div class="msub">Meta: 28 ✓</div></div>
+      <div class="metric"><div class="mlabel">Tempo médio</div><div class="mval">2,8d</div><div class="msub">Abaixo da meta</div></div>
+      <div class="metric green"><div class="mlabel">SLA cumprido</div><div class="mval green">89%</div><div class="msub">Meta: 85% ✓</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="card-accent"></span>Demandas por tipo</div>
+        ${[
+          ["Rampas e acessos", 72],
+          ["Intérprete LIBRAS", 45],
+          ["Equipamentos adaptados", 38],
+          ["Documentação", 28],
+          ["Infraestrutura", 17],
+          ["Outros", 12],
+        ]
+          .map(
+            ([l, v]) => `
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:2px"><span>${l}</span><span style="font-weight:700;color:var(--pb-blue)">${v}%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width:${v}%"></div></div>
+          </div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-accent" style="background:#c0392b"></span>Alertas ativos</div>
+        <div class="alert-box a-crit"><div class="dot d-red"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">🔴 Elevador B2 fora de operação</div><div style="font-size:11px;color:var(--text2)">Sensor IoT detectou falha há 40min. Manutenção acionada.</div><button class="btn btn-ghost mt12" style="font-size:11px;padding:4px 10px" onclick="goPage('alertas')">Ver detalhe →</button></div></div>
+        <div class="alert-box a-warn"><div class="dot d-warn"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">🟡 Rampa C3 — obstáculo detectado</div><div style="font-size:11px;color:var(--text2)">IA identificou bloqueio por foto há 1h12min.</div></div></div>
+        <div class="alert-box a-ok"><div class="dot d-green"></div><div><div style="font-size:12px;font-weight:700;color:var(--text)">✅ Banheiro adaptado A1 — OK</div><div style="font-size:11px;color:var(--text2)">Vistoria confirmada hoje às 08:14.</div></div></div>
+      </div>
+    </div>`;
+
+        if (CUR === "rh")
+          return `
+    <div class="pg-header">
+      <div class="pg-title">Painel de Inclusão — RH</div>
+      <div class="pg-sub">Visão consolidada · Todos os setores</div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Funcionários PCD</div><div class="mval blue">284</div><div class="msub">12,4% do quadro total</div></div>
+      <div class="metric yellow"><div class="mlabel">Demandas abertas</div><div class="mval warn">47</div><div class="msub">Todos os setores</div></div>
+      <div class="metric red"><div class="mlabel">Setores críticos</div><div class="mval red">3</div><div class="msub">Abaixo do SLA</div></div>
+      <div class="metric"><div class="mlabel">Índice de inclusão</div><div class="mval">7,4</div><div class="msub">Meta: 8,0 (em evolução)</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="card-accent green"></span>Tipos de deficiência</div>
+        ${[
+          ["Física / motora", 61, "green"],
+          ["Visual", 38, ""],
+          ["Auditiva — LIBRAS", 29, ""],
+          ["Intelectual", 18, ""],
+          ["Múltipla", 14, ""],
+        ]
+          .map(
+            ([l, v, c]) => `
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)"><span>${l}</span><span style="font-weight:700">${v} funcionários</span></div>
+            <div class="bar-bg"><div class="bar-fill ${c}" style="width:${Math.round((v / 61) * 100)}%"></div></div>
+          </div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-accent" style="background:#c0392b"></span>Setores com mais demandas</div>
+        ${[
+          ["Operações", 14, "t-err"],
+          ["Manutenção", 11, "t-warn"],
+          ["Administrativo", 9, "t-info"],
+          ["Engenharia", 7, "t-gray"],
+          ["Logística", 6, "t-gray"],
+        ]
+          .map(
+            ([l, v, t]) => `
+          <div class="trow"><div style="flex:1;font-size:13px;font-weight:600;color:var(--text)">${l}</div><span class="tag ${t}">${v} demandas</span></div>`,
+          )
+          .join("")}
+        <div class="mt12"><button class="btn btn-blue" onclick="goPage('relatorios')" style="width:100%;justify-content:center">📈 Ver relatório completo</button></div>
+      </div>
+    </div>`;
+
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Visão geral do sistema</div>
+      <div class="pg-sub">Status em tempo real · Administrador</div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Usuários ativos</div><div class="mval blue">1.247</div><div class="msub">Online agora: 38</div></div>
+      <div class="metric green"><div class="mlabel">Sensores online</div><div class="mval green">142/148</div><div class="msub">6 com alerta</div></div>
+      <div class="metric"><div class="mlabel">Uptime</div><div class="mval green">99,8%</div><div class="msub">Últimos 30 dias</div></div>
+      <div class="metric yellow"><div class="mlabel">Chamadas de IA</div><div class="mval">3.412</div><div class="msub">Hoje</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="card-accent green"></span>Status dos serviços</div>
+        ${[
+          ["API backend (Laravel)", "Operacional", "t-ok"],
+          ["Microsserviço IA — visão", "Operacional", "t-ok"],
+          ["STT Whisper / TTS", "Operacional", "t-ok"],
+          ["WebSocket / alertas", "Operacional", "t-ok"],
+          ["MQTT broker — sensores", "1 falha ativa", "t-warn"],
+          ["Banco PostgreSQL", "Operacional", "t-ok"],
+          ["Redis / cache", "Operacional", "t-ok"],
+        ]
+          .map(
+            ([l, s, t]) => `
+          <div class="trow"><div style="flex:1;font-size:12px;color:var(--text)">${l}</div><span class="tag ${t}">${s}</span></div>`,
+          )
+          .join("")}
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-accent"></span>Log de ações recentes</div>
+        ${[
+          ["IA classificou 12 demandas automaticamente", "há 2 min"],
+          ["Alerta: sensor E-07 offline (Elevador B2)", "há 8 min"],
+          ["Relatório mensal gerado pelo RH", "há 31 min"],
+          ["Novo usuário criado: juliana.costa", "há 1h"],
+          ["Backup automático concluído com sucesso", "há 3h"],
+          ["Atualização de firmware — sensor P-03", "há 5h"],
+        ]
+          .map(
+            ([a, t]) => `
+          <div class="trow"><div style="flex:1;font-size:12px;color:var(--text)">${a}</div><span style="font-size:10px;color:var(--text3);flex-shrink:0">${t}</span></div>`,
+          )
+          .join("")}
+      </div>
+    </div>`;
+      }
+
+      function pDemandas() {
+        const filtradas =
+          CUR === "funcionario"
+            ? DEMANDAS.filter((d) => d.autor.includes("Maria"))
+            : DEMANDAS;
+        return `
+    <div style="display:flex;align-items:center;justify-content:space-between" class="mb16">
+      <div><div class="pg-title">Demandas</div><div class="pg-sub">${filtradas.length} demandas encontradas</div></div>
+      ${CUR === "funcionario" ? `<button class="btn btn-blue" onclick="goPage('nova')">➕ Nova demanda</button>` : ""}
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:65px">ID</th>
+          <th>Título</th>
+          <th style="width:90px">Tipo</th>
+          <th style="width:70px">Prioridade</th>
+          <th style="width:100px">Status</th>
+          <th style="width:60px">Data</th>
+        </tr></thead>
+        <tbody>
+          ${filtradas
+            .map(
+              (d) => `
+            <tr class="hover-row" onclick="openDemanda('${d.id}')" title="Clique para ver detalhes">
+              <td style="color:var(--text3);font-size:11px;font-weight:700">${d.id}</td>
+              <td>
+                <div style="font-weight:700;color:var(--text)">${d.titulo}</div>
+                <div style="font-size:11px;color:var(--text3)">${d.autor} · ${d.setor}</div>
+              </td>
+              <td><span class="tag t-gray">${d.tipo}</span></td>
+              <td><span class="tag ${d.prioridade === "Alta" ? "t-err" : d.prioridade === "Urgente" ? "t-err" : "t-warn"}">${d.prioridade}</span></td>
+              <td><span class="tag ${d.statusTag}">${d.status}</span></td>
+              <td style="font-size:11px;color:var(--text3)">${d.data}</td>
+            </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+      }
+
+      function openDemanda(id) {
+        const d = DEMANDAS.find((x) => x.id === id);
+        if (!d) return;
+        if (ACC.narr)
+          speak("Demanda " + d.id + ": " + d.titulo + ". Status: " + d.status);
+        const modal = document.createElement("div");
+        modal.className = "modal-bg";
+        modal.id = "modal-demanda";
+        modal.innerHTML = `
+    <div class="modal" role="dialog" aria-label="Detalhes da demanda ${d.id}">
+      <div class="modal-title">
+        <div>
+          <span style="font-size:13px;color:var(--text3);font-weight:400">${d.id}</span><br>
+          ${d.titulo}
+        </div>
+        <button class="modal-close" onclick="document.getElementById('modal-demanda').remove()" aria-label="Fechar">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <span class="tag t-gray">${d.tipo}</span>
+        <span class="tag ${d.statusTag}">${d.status}</span>
+        <span class="tag ${d.prioridade === "Alta" ? "t-err" : "t-warn"}">${d.prioridade}</span>
+        ${d.fotos ? `<span class="tag t-info">📷 Foto anexada</span>` : ""}
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px;padding:10px;background:var(--surface2);border-radius:8px">${d.desc}</div>
+      <div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Histórico de atualizações</div>
+      <div class="demanda-timeline">
+        ${d.historico.map((h) => `<div class="dt-item ${h.ok ? "ok" : ""}"><div style="font-size:12px;font-weight:700;color:var(--text)">${h.t}</div><div style="font-size:10px;color:var(--text3)">${h.d}</div></div>`).join("")}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        ${d.status !== "Resolvida" ? `<button class="btn btn-green" onclick="resolverDemanda('${d.id}')">✅ Marcar como resolvida</button>` : ""}
+        <button class="btn btn-ghost" onclick="document.getElementById('modal-demanda').remove()">Fechar</button>
+      </div>
+    </div>`;
+        document.body.appendChild(modal);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.remove();
+        });
+      }
+
+      function resolverDemanda(id) {
+        const d = DEMANDAS.find((x) => x.id === id);
+        if (d) {
+          d.status = "Resolvida";
+          d.statusTag = "t-ok";
+          d.historico.push({
+            d: "Agora",
+            t: "Demanda marcada como resolvida ✓",
+            ok: true,
+          });
+        }
+        document.getElementById("modal-demanda")?.remove();
+        render();
+        toast("Demanda " + id + " marcada como resolvida!", "ok");
+      }
+
+      function pNova() {
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Nova demanda</div>
+      <div class="pg-sub">Preencha os dados — a IA irá classificar e rotear automaticamente</div>
+    </div>
+    <div style="max-width:580px">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title"><span class="card-accent"></span>Informações da demanda</div>
+        <div class="form-group">
+          <label class="form-label" for="nd-tipo">Tipo de demanda</label>
+          <select class="form-select" id="nd-tipo" onchange="updateNovaDemanda()">
+            <option value="">Selecione...</option>
+            <option>Rampa / acesso</option>
+            <option>Equipamento adaptado</option>
+            <option>Intérprete de LIBRAS</option>
+            <option>Piso tátil</option>
+            <option>Banheiro adaptado</option>
+            <option>Ergonomia / posto de trabalho</option>
+            <option>Sinalização</option>
+            <option>Transporte acessível</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="nd-local">Localização</label>
+          <input class="form-input" id="nd-local" type="text" placeholder="Ex: Bloco C, 2º andar, corredor principal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prioridade</label>
+          <div class="chip-row" id="chips-prio">
+            <span class="chip" onclick="selChip(this,'chips-prio')">Baixa</span>
+            <span class="chip sel" onclick="selChip(this,'chips-prio')">Média</span>
+            <span class="chip" onclick="selChip(this,'chips-prio')">Alta</span>
+            <span class="chip" onclick="selChip(this,'chips-prio')">Urgente</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="nd-desc">Descrição detalhada</label>
+          <textarea class="form-textarea" id="nd-desc" placeholder="Descreva a situação com o máximo de detalhes. A IA irá analisar e sugerir soluções baseadas no histórico..." oninput="aiSuggest()"></textarea>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title"><span class="card-accent yellow"></span>Evidências</div>
+        <div class="form-group">
+          <div class="upload-zone" id="upload-zone" onclick="simularUpload()" role="button" tabindex="0">
+            <div style="font-size:28px;margin-bottom:8px">📷</div>
+            <div style="font-weight:700">Clique para anexar foto ou áudio</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px">A IA analisará imagens automaticamente para confirmar o obstáculo</div>
+          </div>
+          <div id="upload-preview" style="display:none;margin-top:10px;padding:10px;background:var(--pb-green-l);border-radius:8px;border:1px solid var(--pb-green);font-size:12px;color:var(--pb-green-d)">
+            ✅ Foto anexada — IA iniciando análise...
+          </div>
+        </div>
+        <div id="ai-analysis" style="display:none" class="alert-box a-info">
+          <span>🤖</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text)">Análise da IA</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px" id="ai-analysis-text">Processando imagem...</div>
+          </div>
+        </div>
+      </div>
+      <div id="ai-suggest-box" style="display:none" class="card" style="margin-bottom:14px">
+        <div class="card-title"><span class="card-accent green"></span>💡 Sugestão da IA</div>
+        <div id="ai-suggest-text" style="font-size:13px;color:var(--text2);line-height:1.6"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-blue" onclick="submeterDemanda()">✅ Registrar demanda</button>
+        <button class="btn btn-ghost" onclick="goPage('demandas')">Cancelar</button>
+      </div>
+    </div>`;
+      }
+
+      function updateNovaDemanda() {}
+
+      function aiSuggest() {
+        const desc = document.getElementById("nd-desc")?.value || "";
+        const box = document.getElementById("ai-suggest-box");
+        const txt = document.getElementById("ai-suggest-text");
+        if (!box || !txt) return;
+        if (desc.length > 20) {
+          box.style.display = "block";
+          const suggestions = {
+            rampa:
+              "Baseado em 14 demandas similares, o tempo médio de resolução é 2,3 dias. Equipe de Manutenção Civil foi responsável em 80% dos casos. Recomendo prioridade Alta.",
+            libras:
+              "Temos 3 intérpretes disponíveis no cadastro. A demanda será encaminhada ao RH. Prazo médio de atendimento: 3 dias úteis.",
+            elevador:
+              "Demandas de elevador têm SLA de 24h por impacto em mobilidade. Fornecedor ThyssenKrupp atende este equipamento.",
+            piso: "Reparo de piso tátil: equipe de Manutenção Civil, prazo médio 1,5 dias. Material em estoque no almoxarifado.",
+          };
+          const key = Object.keys(suggestions).find((k) =>
+            desc.toLowerCase().includes(k),
+          );
+          txt.textContent = key
+            ? suggestions[key]
+            : "Analisando o texto... Demanda será classificada automaticamente ao registrar.";
+        } else {
+          box.style.display = "none";
+        }
+      }
+
+      function simularUpload() {
+        const prev = document.getElementById("upload-preview");
+        const anal = document.getElementById("ai-analysis");
+        const analText = document.getElementById("ai-analysis-text");
+        if (!prev) return;
+        prev.style.display = "block";
+        if (anal) anal.style.display = "flex";
+        if (analText) analText.textContent = "Processando imagem...";
+        setTimeout(() => {
+          if (analText)
+            analText.textContent =
+              "✅ Obstáculo físico detectado (confiança: 94%). Área de 2,3m² bloqueada. Nenhum sinal de piso tátil visível. Recomenda-se prioridade Alta.";
+          toast("IA analisou a imagem com sucesso!", "ok");
+        }, 1800);
+      }
+
+      function submeterDemanda() {
+        const tipo = document.getElementById("nd-tipo")?.value;
+        const local = document.getElementById("nd-local")?.value;
+        const desc = document.getElementById("nd-desc")?.value;
+        const prio =
+          document.querySelector("#chips-prio .chip.sel")?.textContent ||
+          "Média";
+        if (!tipo) {
+          toast("Selecione o tipo de demanda", "err");
+          return;
+        }
+        if (!local) {
+          toast("Informe a localização", "err");
+          return;
+        }
+        if (!desc || desc.length < 10) {
+          toast("Descreva a situação com mais detalhes", "err");
+          return;
+        }
+        const novaId = "#" + (1043 + DEMANDAS.length);
+        DEMANDAS.unshift({
+          id: novaId,
+          titulo: tipo + " — " + local,
+          tipo,
+          prioridade: prio,
+          status: "Em análise",
+          statusTag: "t-warn",
+          autor: "Maria Ferreira",
+          setor: "Engenharia",
+          data: new Date().toLocaleDateString("pt-BR"),
+          desc,
+          fotos: false,
+          historico: [
+            { d: "Agora", t: "Demanda registrada", ok: false },
+            {
+              d: "Agora",
+              t: "IA iniciou análise e classificação automática",
+              ok: true,
+            },
+          ],
+        });
+        toast(
+          "Demanda " + novaId + " registrada com sucesso! IA iniciou análise.",
+          "ok",
+        );
+        if (ACC.narr) speak("Demanda registrada com sucesso. Número " + novaId);
+        setTimeout(() => goPage("demandas"), 1200);
+      }
+
+      function pRecursos() {
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Recursos de acessibilidade</div>
+      <div class="pg-sub">Serviços e ferramentas disponíveis para você</div>
+    </div>
+    <div class="grid3">
+      ${[
+        [
+          "🤟",
+          "Intérprete de LIBRAS",
+          "Solicite um intérprete certificado para reuniões, treinamentos e eventos.",
+          "Solicitar intérprete",
+          "solicitarLibras()",
+        ],
+        [
+          "🔊",
+          "Narração automática",
+          "Ative a leitura em voz alta de todo o conteúdo da interface.",
+          "Ativar narração",
+          "ACC.narr=true;applyAcc();toast('Narração ativada!','ok')",
+        ],
+        [
+          "🎙️",
+          "Registro por voz",
+          "Registre uma demanda apenas falando. STT em português.",
+          "Gravar áudio",
+          "gravarAudio()",
+        ],
+        [
+          "🗺️",
+          "Mapa de acessibilidade",
+          "Rotas acessíveis, rampas e elevadores no campus.",
+          "Ver mapa",
+          "toast('Mapa interativo do campus abrindo...')",
+        ],
+        [
+          "📄",
+          "Documentos adaptados",
+          "Versões em LIBRAS, áudio e alto contraste de todos os documentos.",
+          "Baixar documentos",
+          "toast('Central de documentos acessíveis aberta')",
+        ],
+        [
+          "🖨️",
+          "Totem de voz",
+          "Acesse o sistema em qualquer totem do campus por voz.",
+          "Como usar",
+          "toast('Guia de uso dos totens enviado por e-mail')",
+        ],
+      ]
+        .map(
+          ([ico, t, d, b, fn]) => `
+        <div class="card" style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:32px">${ico}</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px">${t}</div>
+            <div style="font-size:12px;color:var(--text3);line-height:1.5">${d}</div>
+          </div>
+          <button class="btn btn-blue" style="margin-top:auto;justify-content:center" onclick="${fn}">${b}</button>
+        </div>`,
+        )
+        .join("")}
+    </div>`;
+      }
+
+      function solicitarLibras() {
+        ACC.libras = true;
+        applyAcc();
+        const sw = document.getElementById("sw-libras");
+        if (sw) sw.checked = true;
+        toast("Player de LIBRAS ativado! Intérprete exibido na tela.", "ok");
+        if (ACC.narr) speak("Player de LIBRAS ativado");
+      }
+
+      function gravarAudio() {
+        toast("Gravação de voz iniciada... Fale sua demanda agora.");
+        if (ACC.narr)
+          speak("Gravação iniciada. Por favor, fale sua demanda agora.");
+        setTimeout(
+          () =>
+            toast(
+              'Demanda registrada por voz: "Rampa bloqueada no bloco C." Processando...',
+            ),
+          3000,
+        );
+      }
+
+      function pAcc() {
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Configurações de acessibilidade</div>
+      <div class="pg-sub">Preferências salvas por perfil · Padrão eMAG e WCAG 2.1 AA</div>
+    </div>
+    <div style="max-width:520px;display:flex;flex-direction:column;gap:14px">
+
+      <div class="card">
+        <div class="acc-section">Aparência e contraste</div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">🌙 Modo escuro</div>
+            <div class="toggle-desc">Interface com fundo escuro para reduzir cansaço visual</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="sw-dark" onchange="ACC.dark=this.checked;applyAcc();toast('Modo '+(this.checked?'escuro':'claro')+' ativado')"><span class="switch-slider"></span></label>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">⬛ Alto contraste</div>
+            <div class="toggle-desc">Máximo contraste — padrão WCAG AAA para baixa visão</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="sw-contrast" onchange="ACC.contrast=this.checked;applyAcc();toast('Alto contraste '+(this.checked?'ativado':'desativado'))"><span class="switch-slider"></span></label>
+        </div>
+
+        <div class="range-row">
+          <div style="flex:1">
+            <div class="toggle-label">🔡 Tamanho do texto</div>
+            <div class="toggle-desc">Atual: <strong id="val-font">100%</strong></div>
+          </div>
+          <input type="range" id="rng-font" min="80" max="200" step="5" value="100"
+            oninput="
+              ACC.font=+this.value;
+              document.getElementById('val-font').textContent=this.value+'%';
+              document.body.style.fontSize=this.value+'%';
+              toast('Texto: '+this.value+'%')">
+          <span class="range-val" id="rng-font-lbl">100%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="acc-section">Narração e áudio</div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">🔊 Narração automática (TTS)</div>
+            <div class="toggle-desc">Lê o conteúdo da tela em voz alta em português</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="sw-narr" onchange="
+            ACC.narr=this.checked;
+            applyAcc();
+            if(this.checked){speak('Narração ativada. Bem-vinda ao IAP Petrobras, '+PROFILES[CUR].name);toast('Narração ativada!','ok')}else{toast('Narração desativada')}">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div class="range-row">
+          <div style="flex:1">
+            <div class="toggle-label">⏩ Velocidade da narração</div>
+            <div class="toggle-desc">Atual: <strong id="val-narr">100%</strong></div>
+          </div>
+          <input type="range" id="rng-narr" min="40" max="200" step="10" value="100"
+            oninput="
+              ACC.narrSpeed=this.value/100;
+              document.getElementById('val-narr').textContent=this.value+'%';
+              if(ACC.narr)speak('Velocidade '+this.value+' por cento')">
+          <span class="range-val" id="rng-narr-lbl">100%</span>
+        </div>
+
+        <div class="toggle-row" style="border-bottom:none">
+          <div class="toggle-info">
+            <div class="toggle-label">🎵 Teste de narração</div>
+            <div class="toggle-desc">Clique para ouvir um exemplo da narração atual</div>
+          </div>
+          <button class="btn btn-green" onclick="
+            ACC.narr=true;applyAcc();
+            document.getElementById('sw-narr').checked=true;
+            speak('Olá '+PROFILES[CUR].name+'. Bem-vinda ao sistema IAP da Petrobras. A narração automática está funcionando corretamente.');
+            toast('Testando narração...','ok')">▶ Testar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="acc-section">LIBRAS</div>
+
+        <div class="toggle-row" style="border-bottom:none">
+          <div class="toggle-info">
+            <div class="toggle-label">🤟 Player de LIBRAS</div>
+            <div class="toggle-desc">Exibe intérprete de LIBRAS em janela flutuante na tela</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="sw-libras" onchange="
+            ACC.libras=this.checked;
+            applyAcc();
+            toast('Player LIBRAS '+(this.checked?'ativado — veja o canto inferior esquerdo':'desativado'))">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="acc-section">Movimento e animação</div>
+
+        <div class="toggle-row" style="border-bottom:none">
+          <div class="toggle-info">
+            <div class="toggle-label">🛑 Reduzir animações</div>
+            <div class="toggle-desc">Remove transições e animações (para sensibilidade a movimento)</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="sw-motion" onchange="
+            ACC.motion=this.checked;
+            applyAcc();
+            toast('Animações '+(this.checked?'reduzidas':'normais'))">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-blue" onclick="salvarAcc()">💾 Salvar preferências</button>
+        <button class="btn btn-ghost" onclick="resetAcc()">↺ Restaurar padrão</button>
+      </div>
+    </div>`;
+      }
+
+      function salvarAcc() {
+        toast("Preferências de acessibilidade salvas com sucesso!", "ok");
+        if (ACC.narr) speak("Preferências salvas com sucesso");
+      }
+
+      function resetAcc() {
+        ACC = {
+          dark: false,
+          contrast: false,
+          font: 100,
+          narr: false,
+          narrSpeed: 1,
+          libras: false,
+          motion: false,
+        };
+        applyAcc();
+        stopNarr();
+        document.body.style.fontSize = "100%";
+        renderContent();
+        toast("Configurações restauradas ao padrão");
+      }
+
+      function pAlertas() {
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Alertas do setor</div>
+      <div class="pg-sub">Monitoramento em tempo real via sensores IoT e IA</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${[
+        [
+          "🔴",
+          "Elevador B2 fora de operação",
+          "a-crit",
+          "d-red",
+          "Crítico",
+          "t-err",
+          "há 40min",
+          "Sensor IoT detectou falha no motor. Manutenção acionada automaticamente às 09:14. Previsão de reparo: 4h. Usuários redirecionados para elevador A1.",
+        ],
+        [
+          "🟡",
+          "Rampa C3 — obstáculo detectado pela IA",
+          "a-warn",
+          "d-warn",
+          "Atenção",
+          "t-warn",
+          "há 1h 12min",
+          "Câmera de monitoramento enviou imagem. IA identificou caixas de papelão bloqueando 80% da rampa. Foto registrada. Demanda #1043 aberta automaticamente.",
+        ],
+        [
+          "🟡",
+          "Banheiro adaptado F1 — vistoria vencida",
+          "a-warn",
+          "d-warn",
+          "Atenção",
+          "t-warn",
+          "há 2h",
+          "Última vistoria há 32 dias (meta: 30 dias). Sistema agendou inspeção para amanhã às 08:00.",
+        ],
+        [
+          "🟢",
+          "Piso tátil A2 — reparo concluído",
+          "a-ok",
+          "d-green",
+          "Resolvido",
+          "t-ok",
+          "há 3h 20min",
+          "Demanda #1021 encerrada. Equipe de manutenção civil substituiu 4m de piso tátil direcional e de alerta. Área liberada.",
+        ],
+        [
+          "🔵",
+          "Atualização de firmware — sensores P-01 a P-05",
+          "a-info",
+          "d-blue",
+          "Info",
+          "t-info",
+          "há 5h",
+          "Firmware v2.3.1 instalado em 5 sensores de banheiro. Melhoria na detecção de ocupação em 15%.",
+        ],
+      ]
+        .map(
+          ([ico, t, ac, dc, s, stag, h, desc]) => `
+        <div class="alert-box ${ac}">
+          <div class="dot ${dc}"></div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">
+              <div style="font-size:13px;font-weight:800;color:var(--text)">${ico} ${t}</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                <span class="tag ${stag}">${s}</span>
+                <span style="font-size:10px;color:var(--text3)">${h}</span>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.5">${desc}</div>
+          </div>
+        </div>`,
+        )
+        .join("")}
+    </div>`;
+      }
+
+      function pRelatorios() {
+        return `
+    <div style="display:flex;align-items:center;justify-content:space-between" class="mb16">
+      <div><div class="pg-title">Relatórios</div><div class="pg-sub">Gerados automaticamente por IA com base nos dados do sistema</div></div>
+      <button class="btn btn-blue" onclick="gerarRelatorio()">🤖 Gerar com IA</button>
+    </div>
+    <div class="grid2">
+      ${[
+        [
+          "📊",
+          "Relatório mensal — Julho 2025",
+          "Consolidado de todas as demandas, SLA e resoluções por setor",
+          "Gerado em 01/07/2025 às 08:00",
+          "t-ok",
+          "Disponível",
+        ],
+        [
+          "📈",
+          "Relatório de SLA — Q2 2025",
+          "Cumprimento de prazo por setor, perfil e tipo de demanda",
+          "Gerado em 01/06/2025",
+          "t-ok",
+          "Disponível",
+        ],
+        [
+          "🤖",
+          "Análise de padrões — 2025",
+          "IA detectou tendências e sazonalidade nas demandas de acessibilidade",
+          "Gerado em 15/06/2025",
+          "t-info",
+          "IA",
+        ],
+        [
+          "🔧",
+          "Diagnóstico de infraestrutura",
+          "Estado atual de todos os sensores, elevadores e rampas monitorados",
+          "Em geração...",
+          "t-warn",
+          "Aguarde",
+        ],
+        [
+          "👥",
+          "Índice de inclusão — Junho 2025",
+          "Score por setor: conformidade com eMAG, NBR 9050 e LGPD",
+          "Gerado em 01/07/2025",
+          "t-ok",
+          "Disponível",
+        ],
+        [
+          "📋",
+          "Auditoria LGPD — 2025",
+          "Registro de todos os acessos a dados pessoais de funcionários PCD",
+          "Gerado em 10/07/2025",
+          "t-ok",
+          "Disponível",
+        ],
+      ]
+        .map(
+          ([ico, t, d, s, tag, l]) => `
+        <div class="card hover-row" onclick="abrirRelatorio('${t}')">
+          <div style="font-size:24px;margin-bottom:8px">${ico}</div>
+          <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px">${t}</div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:12px">${d}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:11px;color:var(--text3)">${s}</span>
+            <span class="tag ${tag}">${l}</span>
+          </div>
+        </div>`,
+        )
+        .join("")}
+    </div>`;
+      }
+
+      function abrirRelatorio(t) {
+        toast("Abrindo: " + t);
+        if (ACC.narr) speak("Abrindo relatório: " + t);
+      }
+      function gerarRelatorio() {
+        toast("IA iniciando geração de relatório personalizado...");
+        setTimeout(
+          () => toast("Relatório gerado! Disponível na lista.", "ok"),
+          2500,
+        );
+      }
+
+      function pFuncionarios() {
+        const funcs = [
+          {
+            n: "Maria Ferreira",
+            m: "maria.ferreira",
+            s: "Engenharia",
+            t: "Motora",
+            st: "t-ok",
+            stl: "Ativo",
+            d: "2 em aberto",
+          },
+          {
+            n: "João Santos",
+            m: "joao.santos",
+            s: "Operações",
+            t: "Auditiva (LIBRAS)",
+            st: "t-ok",
+            stl: "Ativo",
+            d: "1 em aberto",
+          },
+          {
+            n: "Carla Mendes",
+            m: "carla.mendes",
+            s: "Administrativo",
+            t: "Visual",
+            st: "t-warn",
+            stl: "Atenção",
+            d: "Vistoria pendente",
+          },
+          {
+            n: "Pedro Lima",
+            m: "pedro.lima",
+            s: "Logística",
+            t: "Motora",
+            st: "t-ok",
+            stl: "Ativo",
+            d: "Sem demandas",
+          },
+          {
+            n: "Ana Keller",
+            m: "ana.keller",
+            s: "TI",
+            t: "Múltipla",
+            st: "t-err",
+            stl: "Crítico",
+            d: "3 em aberto",
+          },
+          {
+            n: "Juliana Costa",
+            m: "juliana.costa",
+            s: "Logística",
+            t: "Auditiva",
+            st: "t-ok",
+            stl: "Ativo",
+            d: "Sem demandas",
+          },
+        ];
+        return `
+    <div style="display:flex;align-items:center;justify-content:space-between" class="mb16">
+      <div><div class="pg-title">Funcionários PCD</div><div class="pg-sub">284 cadastrados · 12,4% do quadro total</div></div>
+      <button class="btn btn-blue" onclick="toast('Formulário de novo funcionário aberto')">➕ Cadastrar</button>
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <thead><tr>
+          <th>Nome</th><th style="width:110px">Setor</th><th style="width:120px">Tipo PCD</th><th style="width:80px">Status</th><th style="width:120px">Situação</th>
+        </tr></thead>
+        <tbody>
+          ${funcs
+            .map(
+              (f) => `
+            <tr class="hover-row" onclick="verFuncionario('${f.n}')">
+              <td>
+                <div style="font-weight:700;color:var(--text)">${f.n}</div>
+                <div style="font-size:11px;color:var(--text3)">${f.m}@petrobras.com</div>
+              </td>
+              <td style="color:var(--text2)">${f.s}</td>
+              <td><span class="tag t-gray">${f.t}</span></td>
+              <td><span class="tag ${f.st}">${f.stl}</span></td>
+              <td style="font-size:11px;color:var(--text3)">${f.d}</td>
+            </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+      }
+
+      function verFuncionario(nome) {
+        toast("Abrindo perfil: " + nome);
+        if (ACC.narr) speak("Perfil de " + nome);
+      }
+
+      function pSensores() {
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Monitoramento de sensores IoT</div>
+      <div class="pg-sub">Atualização automática a cada 30 segundos via MQTT</div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="mlabel">Total de sensores</div><div class="mval">148</div></div>
+      <div class="metric green"><div class="mlabel">Online</div><div class="mval green" id="s-online">142</div></div>
+      <div class="metric yellow"><div class="mlabel">Em alerta</div><div class="mval warn" id="s-alert">4</div></div>
+      <div class="metric red"><div class="mlabel">Offline</div><div class="mval red" id="s-off">2</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span class="card-accent"></span>Sensores ativos
+        <span class="pulse p-ok live-dot" style="margin-left:auto"></span>
+        <span style="font-size:11px;color:var(--text3);margin-left:4px" id="sensor-time">Ao vivo</span>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:60px">ID</th><th>Local</th><th style="width:90px">Tipo</th><th style="width:80px">Leitura</th><th style="width:75px">Status</th><th style="width:80px">Há</th>
+        </tr></thead>
+        <tbody id="sensor-tbody">
+          ${sensorRows()}
+        </tbody>
+      </table>
+    </div>`;
+      }
+
+      function sensorRows() {
+        const dados = [
+          [
+            "E-01",
+            "Elevador A — térreo",
+            "Elevador",
+            "Operando",
+            "t-ok",
+            "1min",
+          ],
+          [
+            "E-07",
+            "Elevador B — 2º andar",
+            "Elevador",
+            "OFFLINE",
+            "t-err",
+            "43min",
+          ],
+          [
+            "R-14",
+            "Rampa C3 — entrada sul",
+            "Câmera IA",
+            "ALERTA",
+            "t-warn",
+            "12min",
+          ],
+          [
+            "R-02",
+            "Rampa A1 — entrada norte",
+            "Câmera IA",
+            "Livre",
+            "t-ok",
+            "2min",
+          ],
+          ["P-03", "Banheiro adaptado A1", "Ocupação", "Livre", "t-ok", "2min"],
+          ["P-08", "Banheiro adaptado F1", "Ocupação", "Livre", "t-ok", "4min"],
+          [
+            "S-11",
+            "Sinalização sonora — recepção",
+            "Áudio",
+            "Ativo",
+            "t-ok",
+            "1min",
+          ],
+          [
+            "T-04",
+            "Piso tátil — entrada principal",
+            "Pressão",
+            "Normal",
+            "t-ok",
+            "3min",
+          ],
+        ];
+        return dados
+          .map(
+            ([id, l, t, r, tag, u]) => `
+    <tr>
+      <td style="font-size:11px;font-weight:700;color:var(--text3)">${id}</td>
+      <td style="color:var(--text)">${l}</td>
+      <td style="color:var(--text2);font-size:12px">${t}</td>
+      <td><span class="tag ${tag}">${r}</span></td>
+      <td><span class="tag ${tag}">${tag === "t-ok" ? "Online" : tag === "t-warn" ? "Alerta" : "Offline"}</span></td>
+      <td style="font-size:11px;color:var(--text3)">há ${u}</td>
+    </tr>`,
+          )
+          .join("");
+      }
+
+      let sensorTimer = null;
+      function startSensorLive() {
+        clearInterval(sensorTimer);
+        sensorTimer = setInterval(() => {
+          const el = document.getElementById("sensor-time");
+          if (!el) {
+            clearInterval(sensorTimer);
+            return;
+          }
+          el.textContent =
+            "Atualizado: " + new Date().toLocaleTimeString("pt-BR");
+        }, 5000);
+      }
+
+      function pUsuarios() {
+        const users = [
+          {
+            n: "Maria Ferreira",
+            e: "maria.ferreira",
+            s: "Engenharia",
+            p: "Funcionário",
+            u: "hoje 10:41",
+            t: "t-ok",
+          },
+          {
+            n: "Carlos Lima",
+            e: "carlos.lima",
+            s: "Operações",
+            p: "Gestor",
+            u: "hoje 09:30",
+            t: "t-info",
+          },
+          {
+            n: "Ana Paula",
+            e: "ana.paula",
+            s: "RH",
+            p: "RH",
+            u: "hoje 08:15",
+            t: "t-info",
+          },
+          {
+            n: "Roberto Souza",
+            e: "roberto.souza",
+            s: "TI",
+            p: "Admin",
+            u: "hoje 07:00",
+            t: "t-warn",
+          },
+          {
+            n: "Juliana Costa",
+            e: "juliana.costa",
+            s: "Logística",
+            p: "Funcionário",
+            u: "ontem",
+            t: "t-ok",
+          },
+        ];
+        return `
+    <div style="display:flex;align-items:center;justify-content:space-between" class="mb16">
+      <div><div class="pg-title">Usuários do sistema</div><div class="pg-sub">5 cadastrados · Gerenciamento de perfis e permissões</div></div>
+      <button class="btn btn-blue" onclick="criarUsuario()">➕ Novo usuário</button>
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <thead><tr>
+          <th>Usuário</th><th style="width:100px">Setor</th><th style="width:90px">Perfil</th><th style="width:100px">Último acesso</th><th style="width:80px">Ações</th>
+        </tr></thead>
+        <tbody>
+          ${users
+            .map(
+              (u) => `
+            <tr>
+              <td>
+                <div style="font-weight:700;color:var(--text)">${u.n}</div>
+                <div style="font-size:11px;color:var(--text3)">${u.e}@petrobras.com</div>
+              </td>
+              <td style="color:var(--text2)">${u.s}</td>
+              <td><span class="tag ${u.t}">${u.p}</span></td>
+              <td style="font-size:11px;color:var(--text3)">${u.u}</td>
+              <td><button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="toast('Editando: ${u.n}')">Editar</button></td>
+            </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+      }
+
+      function criarUsuario() {
+        const modal = document.createElement("div");
+        modal.className = "modal-bg";
+        modal.id = "modal-user";
+        modal.innerHTML = `
+    <div class="modal" role="dialog">
+      <div class="modal-title">Novo usuário<button class="modal-close" onclick="document.getElementById('modal-user').remove()">✕</button></div>
+      <div class="form-group"><label class="form-label">Nome completo</label><input class="form-input" placeholder="Ex: Fernanda Oliveira"></div>
+      <div class="form-group"><label class="form-label">E-mail Petrobras</label><input class="form-input" placeholder="fernanda.oliveira@petrobras.com"></div>
+      <div class="form-group"><label class="form-label">Setor</label>
+        <select class="form-select"><option>Engenharia</option><option>Operações</option><option>RH</option><option>TI</option><option>Logística</option><option>Manutenção</option><option>Administrativo</option></select></div>
+      <div class="form-group"><label class="form-label">Perfil de acesso</label>
+        <div class="chip-row" id="chips-perfil" style="margin-top:6px">
+          <span class="chip sel" onclick="selChip(this,'chips-perfil')">Funcionário</span>
+          <span class="chip" onclick="selChip(this,'chips-perfil')">Gestor</span>
+          <span class="chip" onclick="selChip(this,'chips-perfil')">RH</span>
+          <span class="chip" onclick="selChip(this,'chips-perfil')">Admin</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btn-blue" onclick="document.getElementById('modal-user').remove();toast('Usuário criado com sucesso!','ok')">Criar usuário</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('modal-user').remove()">Cancelar</button>
+      </div>
+    </div>`;
+        document.body.appendChild(modal);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.remove();
+        });
+      }
+
+      function pAuditoria() {
+        const logs = [
+          [
+            "10:41",
+            "Login no sistema",
+            "roberto.souza",
+            "Admin",
+            "10.0.1.4",
+            "t-ok",
+          ],
+          [
+            "10:38",
+            "Demanda #1042 atualizada (status: Em análise)",
+            "carlos.lima",
+            "Gestor",
+            "10.0.2.11",
+            "t-ok",
+          ],
+          [
+            "10:31",
+            "Relatório mensal exportado em PDF",
+            "ana.paula",
+            "RH",
+            "10.0.3.7",
+            "t-ok",
+          ],
+          [
+            "10:14",
+            "Sensor E-07 marcado como offline",
+            "sistema",
+            "Auto",
+            "—",
+            "t-warn",
+          ],
+          [
+            "09:58",
+            "Novo usuário criado: juliana.costa",
+            "roberto.souza",
+            "Admin",
+            "10.0.1.4",
+            "t-info",
+          ],
+          [
+            "09:30",
+            "Login no sistema",
+            "carlos.lima",
+            "Gestor",
+            "10.0.2.11",
+            "t-ok",
+          ],
+          [
+            "09:14",
+            "Demanda #1042 registrada por Maria Ferreira",
+            "maria.ferreira",
+            "Funcionário",
+            "10.0.4.22",
+            "t-ok",
+          ],
+          ["08:15", "Login no sistema", "ana.paula", "RH", "10.0.3.7", "t-ok"],
+          [
+            "07:00",
+            "Backup automático concluído — 2,3 GB",
+            "sistema",
+            "Auto",
+            "—",
+            "t-ok",
+          ],
+        ];
+        return `
+    <div class="pg-header">
+      <div class="pg-title">Log de auditoria</div>
+      <div class="pg-sub">Todos os acessos a dados pessoais são registrados — conformidade LGPD Art. 37</div>
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <thead><tr>
+          <th style="width:55px">Hora</th><th>Ação</th><th style="width:110px">Usuário</th><th style="width:75px">Perfil</th><th style="width:75px">IP</th><th style="width:65px">Status</th>
+        </tr></thead>
+        <tbody>
+          ${logs
+            .map(
+              ([h, a, u, p, ip, tag]) => `
+            <tr class="hover-row">
+              <td style="font-size:11px;font-weight:700;color:var(--pb-blue)">${h}</td>
+              <td style="color:var(--text);font-size:12px">${a}</td>
+              <td style="color:var(--text3);font-size:11px">${u}</td>
+              <td><span class="tag t-gray">${p}</span></td>
+              <td style="font-size:11px;color:var(--text3)">${ip}</td>
+              <td><span class="tag ${tag}">${tag === "t-ok" ? "OK" : tag === "t-warn" ? "Aviso" : "Info"}</span></td>
+            </tr>`,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+      }
+
+      // ======= UTILS =======
+      function selChip(el, groupId) {
+        document
+          .getElementById(groupId)
+          ?.querySelectorAll(".chip")
+          .forEach((c) => c.classList.remove("sel"));
+        el.classList.add("sel");
+      }
+
+      // Carrega vozes quando disponível
+      if (window.speechSynthesis) {
+        speechSynthesis.onvoiceschanged = () => {};
+      }
+
+      // INIT
+      render();
+    </script>
+  </body>
+</html>
