@@ -1,26 +1,80 @@
-# IAP — Inteligência de Acessibilidade Petrobras ⛽♿
+# IAP — Inteligência de Acessibilidade
+## Estrutura do projeto
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Acessar%20Projeto-003da5?style=for-the-badge&logo=github)](https://guibazon.github.io/grand-prix/)
-
-Dashboard moderno focado em acessibilidade e monitoramento de sistemas, seguindo rigorosamente a identidade visual da Petrobras.
-
-## 🚀 Demonstração
-O projeto está disponível em: [https://guibazon.github.io/grand-prix/](https://guibazon.github.io/grand-prix/)
-
-## ✨ Destaques
-- **Painel de Acessibilidade:** Ajuste dinâmico de escala de fonte, velocidade de narração e alternância de temas (Light/Dark).
-- **Monitoramento de Logs:** Tabela interativa para acompanhamento de ações, usuários, IPs e status da operação.
-- **Vanilla Tech:** Desenvolvido sem frameworks, utilizando apenas HTML5, CSS3 (Custom Properties) e JavaScript puro.
-- **Responsivo:** Interface adaptável para qualquer tamanho de tela.
-
-## 🛠️ Tecnologias
-- **HTML5** (Semântica)
-- **CSS3** (Flexbox e Variáveis)
-- **JavaScript** (Manipulação de DOM)
-
-## ⚙️ Como rodar
-1. Clone este repositório.
-2. Abra o arquivo `index.html` diretamente no seu navegador.
+```
+iap/
+├── index.html              ← HTML puro, sem CSS nem JS inline
+│
+├── css/
+│   ├── theme.css           ← ⭐ TROCAR CLIENTE AQUI (cores, marca)
+│   ├── base.css            ← Layout, topbar, sidebar, toast, libras
+│   ├── components.css      ← Cards, tabelas, forms, botões, tags...
+│   └── responsive.css      ← Breakpoints mobile/tablet
+│
+└── js/
+    ├── config.js           ← ⭐ TROCAR CLIENTE AQUI (nome, perfis, dados)
+    ├── state.js            ← Estado global (profile, page, demandas, acc)
+    ├── accessibility.js    ← TTS, font scale, temas, LIBRAS
+    ├── ui.js               ← Toast, sidebar, modal, chips
+    ├── router.js           ← Renderiza sidebar + despacha para páginas
+    ├── app.js              ← Inicialização (carrega por último)
+    │
+    └── pages/
+        ├── dash.js         ← Painéis dos 4 perfis
+        ├── demandas.js     ← Lista, modal de detalhe, resolver
+        ├── nova.js         ← Formulário + IA suggest + upload
+        └── outros.js       ← recursos, acc, alertas, relatórios,
+                               funcionários, sensores, usuários, auditoria
+```
 
 ---
-Desenvolvido por [Guilherme Bazon](https://github.com/guibazon)
+
+## Como adaptar para outro cliente (ex: SENAI)
+
+### 1. Trocar as cores — `css/theme.css`
+```css
+:root {
+  --brand-primary:   #e30613;  /* vermelho SENAI */
+  --brand-secondary: #0066cc;  /* azul */
+  --brand-accent:    #ffcc00;  /* amarelo */
+}
+```
+
+### 2. Trocar nome e perfis — `js/config.js`
+```js
+const APP = {
+  name:       'SAI · SENAI',
+  subtitle:   'Sistema de Acessibilidade Inclusiva',
+  logoLetter: 'S',
+};
+```
+
+### 3. Adicionar uma nova página
+1. Crie `js/pages/minhapagina.js` com `Pages.minhapagina = function() { return '<html>'; }`
+2. Adicione `{ ico: '🆕', label: 'Minha página', page: 'minhapagina' }` no nav do perfil em `config.js`
+3. Registre em `router.js`: `minhapagina: () => Pages.minhapagina()`
+4. Inclua o script no `index.html`: `<script src="js/pages/minhapagina.js"></script>`
+
+### 4. Conectar a uma API real
+Substitua os dados em `state.js` por chamadas `fetch`:
+```js
+// Em state.js
+async loadDemandas() {
+  const res = await fetch('/api/demandas');
+  this.demandas = await res.json();
+}
+```
+
+---
+
+## Responsividade
+- Desktop (>768px): sidebar fixa + conteúdo ao lado
+- Tablet/Mobile (≤768px): sidebar se torna drawer com botão ☰
+- Todas as tabelas têm scroll horizontal em telas pequenas
+
+## Acessibilidade
+- WCAG 2.1 AA por padrão, AAA no modo alto contraste
+- TTS em português via Web Speech API (funciona no Chrome/Edge/Safari)
+- Font scale: slider de 80% a 200%, escala todo o sistema via `html { font-size }`
+- Redução de animações via `data-reduce-motion`
+- Player LIBRAS com animação e legenda sincronizada com narração

@@ -1,0 +1,73 @@
+/*
+ * theme.css — Tokens de cor e tema
+ * ─────────────────────────────────
+ * Para adaptar para outro cliente (ex: SENAI):
+ *   1. Troque os valores de --brand-primary, --brand-secondary, --brand-accent
+ *   2. Ajuste --brand-logo-text e --brand-name no index.html
+ *   3. Os temas dark e alto-contraste se ajustam automaticamente
+ */
+
+:root {
+  /* ── Marca (Petrobras) ── */
+  --brand-primary:   #003DA5;   /* azul principal */
+  --brand-primary-d: #002878;   /* azul escuro */
+  --brand-primary-l: #e8f0fb;   /* azul claro / fundo */
+  --brand-secondary: #009640;   /* verde */
+  --brand-secondary-d: #006e2e;
+  --brand-secondary-l: #e6f5ec;
+  --brand-accent:    #FFD100;   /* amarelo */
+  --brand-accent-d:  #b39200;
+
+  /* ── Superfícies ── */
+  --bg:       #f0f4fa;
+  --surface:  #ffffff;
+  --surface2: #f0f4fa;
+
+  /* ── Texto ── */
+  --text:     #0d1a2e;
+  --text2:    #3a4a60;
+  --text3:    #6b7c96;
+
+  /* ── Bordas ── */
+  --border:   #d0d9e8;
+
+  /* ── Utilitários ── */
+  --radius:   10px;
+  --sidebar-w: 230px;
+}
+
+/* ── Tema escuro ── */
+[data-theme="dark"] {
+  --bg:       #09111f;
+  --surface:  #111c2e;
+  --surface2: #182236;
+  --text:     #e8f0fb;
+  --text2:    #9ab0cc;
+  --text3:    #5a7090;
+  --border:   #243448;
+  --brand-primary-l: #0a1e3d;
+  --brand-secondary-l: #0a2018;
+}
+
+/* ── Alto contraste (WCAG AAA) ── */
+[data-contrast="high"] {
+  --bg:       #000000;
+  --surface:  #0a0a0a;
+  --surface2: #111111;
+  --text:     #ffffff;
+  --text2:    #FFD100;
+  --text3:    #cccccc;
+  --border:   #ffffff;
+  --brand-primary:   #5aadff;
+  --brand-primary-l: #001830;
+  --brand-primary-d: #003870;
+  --brand-secondary: #00e060;
+  --brand-secondary-l: #001a08;
+  --brand-accent: #FFD100;
+}
+
+/* ── Reduzir movimento ── */
+[data-reduce-motion="true"] * {
+  animation: none !important;
+  transition: none !important;
+}

@@ -1,0 +1,47 @@
+/*
+ * responsive.css — Breakpoints e ajustes mobile/tablet
+ */
+
+@media (max-width: 900px) {
+  .grid3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+@media (max-width: 768px) {
+  #menu-btn { display: flex; align-items: center; }
+  .logo-sub  { display: none; }
+
+  .ptabs  { gap: 2px; }
+  .ptab   { padding: 4px 7px; font-size: 10px; }
+
+  #sidebar {
+    position: fixed;
+    top: 54px; left: -240px;
+    height: calc(100vh - 54px);
+    z-index: 95;
+    width: 230px;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  }
+  #sidebar.open { left: 0; }
+
+  #content { padding: 14px; }
+
+  .grid4 { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+  .grid3 { grid-template-columns: 1fr; }
+  .grid2 { grid-template-columns: 1fr; }
+
+  .pg-title { font-size: 16px; }
+
+  .tbl      { min-width: 520px; }
+  .modal    { padding: 16px; max-width: 98vw; }
+
+  #libras-widget { width: 160px; bottom: 10px; left: 10px; }
+  #toast         { right: 10px; bottom: 10px; max-width: calc(100vw - 20px); }
+}
+
+@media (max-width: 480px) {
+  .grid4  { grid-template-columns: 1fr 1fr; }
+  .ptab   { padding: 3px 5px; font-size: 9px; }
+  .mval   { font-size: 20px; }
+  .ptabs  { gap: 2px; }
+  #topbar { padding: 0 10px; gap: 6px; }
+}
