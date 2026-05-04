@@ -1,0 +1,163 @@
+/* ══════════════════════════════════════════════════════
+   IAP Design System — Variáveis, Temas e Reset
+   ══════════════════════════════════════════════════════ */
+
+/* ── Tema Claro (padrão) ───────────────────────────── */
+:root {
+  /* Tipografia */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Border radius */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.12);
+
+  /* Transições */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+
+  /* Cores de fundo */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f4f6f8;
+  --color-background-tertiary: #e9ecf1;
+  --color-background-info: #e3f0ff;
+  --color-background-success: #e2f7e8;
+  --color-background-warning: #fff5e0;
+  --color-background-danger: #fde8e8;
+
+  /* Cores de texto */
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-tertiary: #9ca3af;
+  --color-text-info: #1d6fe3;
+  --color-text-success: #16a34a;
+  --color-text-warning: #d97706;
+  --color-text-danger: #dc2626;
+
+  /* Cores de borda */
+  --color-border-tertiary: #e2e5ea;
+  --color-border-secondary: #c5cad3;
+  --color-border-info: #93bbf4;
+
+  /* Cores especiais */
+  --color-accent-gradient: linear-gradient(135deg, #1d6fe3 0%, #3b82f6 50%, #60a5fa 100%);
+  --color-sidebar-bg: #f8f9fb;
+  --color-topbar-bg: #ffffff;
+  --color-hover-overlay: rgba(0,0,0,0.03);
+}
+
+/* ── Tema Escuro ───────────────────────────────────── */
+[data-theme="dark"] {
+  --color-background-primary: #1a1d24;
+  --color-background-secondary: #22262e;
+  --color-background-tertiary: #141619;
+  --color-background-info: #172340;
+  --color-background-success: #132a1c;
+  --color-background-warning: #2d2310;
+  --color-background-danger: #2d1414;
+
+  --color-text-primary: #f1f3f5;
+  --color-text-secondary: #9ca3af;
+  --color-text-tertiary: #6b7280;
+  --color-text-info: #60a5fa;
+  --color-text-success: #4ade80;
+  --color-text-warning: #fbbf24;
+  --color-text-danger: #f87171;
+
+  --color-border-tertiary: #2e333b;
+  --color-border-secondary: #3b4049;
+  --color-border-info: #2563eb;
+
+  --color-sidebar-bg: #1e2129;
+  --color-topbar-bg: #1e2129;
+  --color-hover-overlay: rgba(255,255,255,0.04);
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ── Alto Contraste ────────────────────────────────── */
+[data-contrast="high"] {
+  --color-text-primary: #000000;
+  --color-text-secondary: #1a1a1a;
+  --color-text-tertiary: #4a4a4a;
+  --color-border-tertiary: #888888;
+  --color-border-secondary: #666666;
+}
+
+[data-theme="dark"][data-contrast="high"] {
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e5e5e5;
+  --color-text-tertiary: #b0b0b0;
+  --color-border-tertiary: #888888;
+  --color-border-secondary: #aaaaaa;
+}
+
+/* ── Reset e base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  font-family: var(--font-sans);
+  background: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  transition: background var(--transition-normal), color var(--transition-normal);
+}
+
+#root {
+  height: 100%;
+}
+
+/* ── App container ────────────────────────────────── */
+#app {
+  min-height: 600px;
+  background: var(--color-background-tertiary);
+  transition: background var(--transition-normal);
+}
+
+/* ── Scrollbar custom ─────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ── Selection ────────────────────────────────────── */
+::selection {
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+}
