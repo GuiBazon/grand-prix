@@ -133,7 +133,6 @@ Pages._onFileSelected = function (input) {
   if (anal) anal.style.display = 'flex';
   if (analText) analText.textContent = 'Processando arquivo...';
 
-  // Simula análise de IA
   setTimeout(() => {
     if (analText) {
       analText.textContent = file.type.startsWith('image/')
@@ -144,7 +143,7 @@ Pages._onFileSelected = function (input) {
   }, 1800);
 };
 
-Pages._submeterDemanda = function () {
+Pages._submeterDemanda = async function () {
   const p     = PROFILES[State.profile];
   const tipo  = document.getElementById('nd-tipo')?.value;
   const local = document.getElementById('nd-local')?.value?.trim();
@@ -152,12 +151,12 @@ Pages._submeterDemanda = function () {
   const prio  = document.querySelector('#chips-prio .chip.sel')?.textContent || 'Média';
   const fotos = !!document.getElementById('nd-file')?.files?.length;
 
-  if (!tipo)                   { UI.toast('Selecione o tipo de demanda', 'err');              return; }
-  if (!local)                  { UI.toast('Informe a localização', 'err');                    return; }
-  if (!desc || desc.length < 10) { UI.toast('Descreva a situação com mais detalhes', 'err'); return; }
+  if (!tipo)                     { UI.toast('Selecione o tipo de demanda', 'err');              return; }
+  if (!local)                    { UI.toast('Informe a localização', 'err');                    return; }
+  if (!desc || desc.length < 10) { UI.toast('Descreva a situação com mais detalhes', 'err');   return; }
 
-  const novaId = State.nextId();
-  State.addDemanda({
+  const novaId  = State.nextId();
+  const demanda = {
     id:         novaId,
     titulo:     tipo + ' — ' + local,
     tipo,
@@ -173,9 +172,19 @@ Pages._submeterDemanda = function () {
       { d: 'Agora', t: 'Demanda registrada', ok: false },
       { d: 'Agora', t: 'IA iniciou análise e classificação automática', ok: true },
     ],
-  });
+  };
 
-  UI.toast('Demanda ' + novaId + ' registrada! IA iniciou análise.', 'ok');
-  if (State.acc.narr) Accessibility.speak('Demanda registrada com sucesso. Número ' + novaId);
-  setTimeout(() => State.goTo('demandas'), 1200);
+  // Desabilita o botão para evitar duplo envio
+  const btn = document.querySelector('.btn.btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Registrando...'; }
+
+  try {
+    await State.addDemandaAPI(demanda);
+    UI.toast('Demanda ' + novaId + ' registrada! IA iniciou análise.', 'ok');
+    if (State.acc.narr) Accessibility.speak('Demanda registrada com sucesso. Número ' + novaId);
+    setTimeout(() => State.goTo('demandas'), 1200);
+  } catch (err) {
+    UI.toast('Erro ao registrar: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Registrar demanda'; }
+  }
 };

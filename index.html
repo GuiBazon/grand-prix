@@ -14,18 +14,91 @@
 </head>
 <body>
 
+  <!-- ── Tela de login (visível até autenticação) ─────────────── -->
+  <div id="login-screen" style="display:none">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-icon" style="width:52px;height:52px;font-size:22px;flex-shrink:0">P</div>
+        <div>
+          <div style="font-size:20px;font-weight:800;color:var(--text);line-height:1.2">IAP · Petrobras</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">Inteligência de Acessibilidade</div>
+        </div>
+      </div>
+
+      <form onsubmit="_fazerLogin(event)" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input class="form-input" id="login-email" type="email"
+                 placeholder="seu@petrobras.com"
+                 autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-senha">Senha</label>
+          <input class="form-input" id="login-senha" type="password"
+                 placeholder="••••••"
+                 autocomplete="current-password" required>
+        </div>
+
+        <div id="login-erro" role="alert" style="display:none;color:#c0392b;font-size:12px;margin-bottom:12px;padding:8px 12px;background:#fff5f5;border-radius:6px;border-left:3px solid #c0392b"></div>
+
+        <button class="btn btn-primary" id="login-btn" type="submit"
+                style="width:100%;justify-content:center;font-size:14px;padding:11px 0">
+          Entrar
+        </button>
+      </form>
+
+      <!-- Credenciais de demonstração -->
+      <div class="login-demo" aria-label="Credenciais de demonstração">
+        <div class="login-demo-title">Credenciais de demonstração</div>
+        <div class="login-demo-grid">
+          <button class="login-demo-item" onclick="_preencherDemo('maria@petrobras.com','123456')" type="button">
+            <span class="av av-blue" style="width:28px;height:28px;font-size:11px;flex-shrink:0">MF</span>
+            <div style="text-align:left">
+              <div style="font-weight:700;font-size:11px;color:var(--text)">Maria Ferreira</div>
+              <div style="font-size:10px;color:var(--text3)">Funcionária · maria@petrobras.com</div>
+            </div>
+          </button>
+          <button class="login-demo-item" onclick="_preencherDemo('carlos@petrobras.com','123456')" type="button">
+            <span class="av av-green" style="width:28px;height:28px;font-size:11px;flex-shrink:0">CL</span>
+            <div style="text-align:left">
+              <div style="font-weight:700;font-size:11px;color:var(--text)">Carlos Lima</div>
+              <div style="font-size:10px;color:var(--text3)">Gestor · carlos@petrobras.com</div>
+            </div>
+          </button>
+          <button class="login-demo-item" onclick="_preencherDemo('ana@petrobras.com','123456')" type="button">
+            <span class="av av-yellow" style="width:28px;height:28px;font-size:11px;flex-shrink:0">AP</span>
+            <div style="text-align:left">
+              <div style="font-weight:700;font-size:11px;color:var(--text)">Ana Paula</div>
+              <div style="font-size:10px;color:var(--text3)">RH · ana@petrobras.com</div>
+            </div>
+          </button>
+          <button class="login-demo-item" onclick="_preencherDemo('roberto@petrobras.com','123456')" type="button">
+            <span class="av av-dark" style="width:28px;height:28px;font-size:11px;flex-shrink:0">RS</span>
+            <div style="text-align:left">
+              <div style="font-weight:700;font-size:11px;color:var(--text)">Roberto Souza</div>
+              <div style="font-size:10px;color:var(--text3)">Admin · roberto@petrobras.com</div>
+            </div>
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:10px;text-align:center">
+          Clique em um usuário para preencher automaticamente · Senha: <b>123456</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Link de pular para conteúdo (acessibilidade) ── -->
   <a href="#content" class="skip-link">Pular para o conteúdo principal</a>
 
   <!-- ── Banner de narração ativa ── -->
-  <div id="narr-banner" role="status" aria-live="polite" aria-label="Narração ativa">
+  <div id="narr-banner" role="status" aria-live="polite" aria-label="Narração ativa" style="display:none">
     <span aria-hidden="true">🔊</span>
     <span id="narr-text">Narração ativa — aguardando</span>
     <button onclick="State.setAcc('narr', false); Router.render();" aria-label="Desativar narração">Parar</button>
   </div>
 
   <!-- ── Topbar ── -->
-  <header id="topbar" role="banner">
+  <header id="topbar" role="banner" style="display:none">
     <button id="menu-btn"
             onclick="UI.toggleSidebar()"
             aria-label="Abrir menu de navegação"
@@ -42,27 +115,11 @@
 
     <div class="spacer"></div>
 
-    <!-- Seletor de perfil (demo) -->
-    <nav class="ptabs" aria-label="Selecionar perfil de demonstração">
-      <button class="ptab active"
-              onclick="State.setProfile('funcionario'); document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
-              aria-pressed="true">Funcionário</button>
-      <button class="ptab"
-              onclick="State.setProfile('gestor');      document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
-              aria-pressed="false">Gestor</button>
-      <button class="ptab"
-              onclick="State.setProfile('rh');          document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
-              aria-pressed="false">RH</button>
-      <button class="ptab"
-              onclick="State.setProfile('admin');       document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
-              aria-pressed="false">Admin</button>
-    </nav>
-
-    <div class="topbar-user" id="topbar-av" aria-label="Usuário: Maria Ferreira">MF</div>
+    <div class="topbar-user" id="topbar-av" aria-label="Usuário autenticado">--</div>
   </header>
 
   <!-- ── Layout ── -->
-  <div id="layout">
+  <div id="layout" style="display:none">
     <nav id="sidebar" aria-label="Menu principal"></nav>
     <main id="content" aria-live="polite" tabindex="-1"></main>
   </div>
@@ -73,7 +130,7 @@
        aria-hidden="true"></div>
 
   <!-- ── Widget LIBRAS ── -->
-  <aside id="libras-widget" role="complementary" aria-label="Intérprete de LIBRAS">
+  <aside id="libras-widget" role="complementary" aria-label="Intérprete de LIBRAS" style="display:none">
     <div class="libras-header">
       <span>🤟 LIBRAS</span>
       <button onclick="State.setAcc('libras', false)" aria-label="Fechar widget LIBRAS">✕</button>

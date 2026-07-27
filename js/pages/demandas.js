@@ -8,7 +8,7 @@ Pages.demandas = function () {
     ? State.demandas.filter(d => d.autor === p.name)
     : State.demandas;
 
-  const abertas   = lista.filter(d => d.status !== 'Resolvida').length;
+  const abertas    = lista.filter(d => d.status !== 'Resolvida').length;
   const resolvidas = lista.filter(d => d.status === 'Resolvida').length;
 
   return `
@@ -100,16 +100,24 @@ Pages._openDemanda = function (id) {
     </div>
     <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">
       ${d.status !== 'Resolvida'
-        ? `<button class="btn btn-secondary" onclick="Pages._resolverDemanda('${d.id}')">✅ Marcar como resolvida</button>`
+        ? `<button class="btn btn-secondary" id="btn-resolver-${d.id}" onclick="Pages._resolverDemanda('${d.id}')">✅ Marcar como resolvida</button>`
         : `<div class="tag t-ok" style="padding:8px 14px;font-size:12px">✅ Demanda resolvida</div>`}
       <button class="btn btn-ghost" onclick="UI.closeModal('modal-demanda')">Fechar</button>
     </div>
   `, 'modal-demanda');
 };
 
-Pages._resolverDemanda = function (id) {
-  State.resolveDemanda(id);
-  UI.closeModal('modal-demanda');
-  Router.render();
-  UI.toast('Demanda ' + id + ' marcada como resolvida!', 'ok');
+Pages._resolverDemanda = async function (id) {
+  const btn = document.getElementById('btn-resolver-' + id);
+  if (btn) { btn.disabled = true; btn.textContent = 'Resolvendo...'; }
+
+  try {
+    await State.resolveDemandaAPI(id);
+    UI.closeModal('modal-demanda');
+    Router.render();
+    UI.toast('Demanda ' + id + ' marcada como resolvida!', 'ok');
+  } catch (err) {
+    UI.toast('Erro ao resolver: ' + err.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Marcar como resolvida'; }
+  }
 };

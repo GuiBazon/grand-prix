@@ -2,6 +2,7 @@
  * state.js — Estado global da aplicação
  * Centraliza todos os dados mutáveis em um único lugar.
  * Preferências de acessibilidade são persistidas via localStorage.
+ * Dados de demandas e autenticação são gerenciados via API REST.
  */
 
 const _ACC_STORAGE_KEY = 'iap-acc-prefs';
@@ -34,8 +35,78 @@ function _saveAccPrefs(acc) {
 const State = {
   profile:  'funcionario',
   page:     'dash',
-  demandas: [...DEMANDAS_INICIAL],
+  demandas: [],          // preenchido via fetchDemandas() após autenticação
   acc:      _loadAccPrefs(),
+  usuario:  null,        // dados do usuário autenticado
+
+  /** Autentica o usuário e sincroniza PROFILES com os dados reais do servidor */
+  autenticar(usuario) {
+    this.usuario = usuario;
+    this.profile = usuario.perfil;
+
+    // Sobrescreve o perfil local com dados vindos do servidor
+    const p = PROFILES[usuario.perfil];
+    if (p) {
+      p.name     = usuario.nome;
+      p.initials = usuario.initials;
+      p.role     = usuario.role_label;
+      p.setor    = usuario.setor;
+      p.avClass  = usuario.av_class;
+    }
+  },
+
+  /** Encerra a sessão e volta para a tela de login */
+  logout() {
+    localStorage.removeItem('iap-token');
+    location.reload();
+  },
+
+  /** Carrega demandas da API (chamado após autenticação) */
+  async fetchDemandas() {
+    const token = localStorage.getItem('iap-token');
+    const resp  = await fetch('/api/demandas', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) throw new Error('Erro ao buscar demandas');
+    this.demandas = await resp.json();
+  },
+
+  /** Registra nova demanda na API e atualiza o estado local */
+  async addDemandaAPI(demanda) {
+    const token = localStorage.getItem('iap-token');
+    const resp  = await fetch('/api/demandas', {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization:  'Bearer ' + token,
+      },
+      body: JSON.stringify(demanda),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.erro || 'Erro ao registrar demanda');
+    }
+    const nova = await resp.json();
+    this.demandas.unshift(nova);
+    return nova;
+  },
+
+  /** Resolve uma demanda na API e atualiza o estado local */
+  async resolveDemandaAPI(id) {
+    const token = localStorage.getItem('iap-token');
+    const resp  = await fetch(`/api/demandas/${encodeURIComponent(id)}/resolver`, {
+      method:  'PUT',
+      headers: { Authorization: 'Bearer ' + token },
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.erro || 'Erro ao resolver demanda');
+    }
+    const updated = await resp.json();
+    const idx = this.demandas.findIndex(d => d.id === id);
+    if (idx >= 0) this.demandas[idx] = updated;
+    return updated;
+  },
 
   /** Atualiza qualquer chave de acc, re-aplica e persiste */
   setAcc(key, value) {
@@ -53,7 +124,6 @@ const State = {
   goTo(page) {
     this.page = page;
     Router.render();
-    // Scroll ao topo do conteúdo
     const content = document.getElementById('content');
     if (content) content.scrollTop = 0;
 
@@ -75,34 +145,12 @@ const State = {
     }
   },
 
-  /** Troca o perfil ativo */
-  setProfile(profile) {
-    this.profile = profile;
-    this.page    = 'dash';
-    Router.render();
-    UI.toast('Perfil: ' + PROFILES[profile].name);
-  },
-
-  /** Adiciona uma nova demanda */
-  addDemanda(demanda) {
-    this.demandas.unshift(demanda);
-  },
-
-  /** Gera um ID único para nova demanda */
+  /** Gera um ID único para nova demanda com base no maior ID existente */
   nextId() {
     const ids = this.demandas
       .map(d => parseInt(d.id.replace('#', ''), 10))
       .filter(n => !isNaN(n));
     const max = ids.length > 0 ? Math.max(...ids) : 1042;
     return '#' + (max + 1);
-  },
-
-  /** Resolve uma demanda pelo id */
-  resolveDemanda(id) {
-    const d = this.demandas.find(x => x.id === id);
-    if (!d) return;
-    d.status    = 'Resolvida';
-    d.statusTag = 't-ok';
-    d.historico.push({ d: 'Agora', t: 'Demanda marcada como resolvida ✓', ok: true });
   },
 };

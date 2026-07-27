@@ -199,6 +199,81 @@ body {
   animation: pageEnter 0.18s ease out;
 }
 
+/* ── Tela de login ──────────────────────────────────────── */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 48px rgba(0,0,0,.10);
+  border: 1px solid var(--border);
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.login-demo {
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--surface2);
+  border-radius: 10px;
+}
+
+.login-demo-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 10px;
+}
+
+.login-demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.login-demo-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-align: left;
+}
+
+.login-demo-item:hover {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-l);
+}
+
+.login-demo-item:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-l);
+}
+
 /* ── Overlay mobile ── */
 #sidebar-overlay {
   display: none;

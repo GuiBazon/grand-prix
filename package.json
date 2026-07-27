@@ -1,0 +1,16 @@
+{
+  "name": "iap-petrobras",
+  "version": "2.0.0",
+  "description": "IAP — Inteligência de Acessibilidade Petrobras",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0"
+  }
+}

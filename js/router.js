@@ -35,8 +35,8 @@ const Router = {
     const p  = PROFILES[State.profile];
     const av = document.getElementById('topbar-av');
     if (av) {
-      av.textContent  = p.initials;
-      av.title        = p.name;
+      av.textContent = p.initials;
+      av.title       = p.name;
       av.setAttribute('aria-label', 'Usuário: ' + p.name);
     }
   },
@@ -45,6 +45,18 @@ const Router = {
     const p  = PROFILES[State.profile];
     const el = document.getElementById('sidebar');
     if (!el) return;
+
+    // Calcula badges dinamicamente a partir do State
+    const _badge = (page) => {
+      if (page === 'demandas') {
+        if (State.profile === 'funcionario') {
+          return State.demandas.filter(d => d.autor === p.name && d.status !== 'Resolvida').length;
+        }
+        return State.demandas.filter(d => d.status !== 'Resolvida').length;
+      }
+      if (page === 'alertas') return 1; // mock
+      return 0;
+    };
 
     el.innerHTML = `
       <div class="user-block">
@@ -58,24 +70,27 @@ const Router = {
       </div>
       <div class="nav-section" aria-hidden="true">Menu</div>
       <nav role="menu" aria-label="Menu principal">
-        ${p.nav.map(n => `
+        ${p.nav.map(n => {
+          const badge = _badge(n.page);
+          return `
           <div class="nav-item ${State.page === n.page ? 'active' : ''}"
                onclick="UI.closeSidebar(); State.goTo('${n.page}')"
                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();UI.closeSidebar();State.goTo('${n.page}');}"
                role="menuitem"
                tabindex="0"
-               aria-label="${n.label}${n.badge ? ', ' + n.badge + ' novas notificações' : ''}"
+               aria-label="${n.label}${badge ? ', ' + badge + ' notificações' : ''}"
                aria-current="${State.page === n.page ? 'page' : 'false'}">
             <span class="nav-icon" aria-hidden="true">${n.ico}</span>
             <span style="flex:1">${n.label}</span>
-            ${n.badge ? `<span class="nbadge" aria-label="${n.badge} novas">${n.badge}</span>` : ''}
-          </div>`).join('')}
+            ${badge ? `<span class="nbadge" aria-label="${badge} novas">${badge}</span>` : ''}
+          </div>`;
+        }).join('')}
       </nav>
       <div style="flex:1"></div>
       <div class="nav-sep"></div>
       <div class="nav-item"
-           onclick="UI.toast('Sessão encerrada. Até logo, ${p.name}!')"
-           onkeydown="if(event.key==='Enter'||event.key===' '){UI.toast('Sessão encerrada. Até logo, ${p.name}!');}"
+           onclick="State.logout()"
+           onkeydown="if(event.key==='Enter'||event.key===' '){State.logout();}"
            tabindex="0"
            role="menuitem"
            aria-label="Sair do sistema">
@@ -94,7 +109,7 @@ const Router = {
 
     el.innerHTML = fn();
 
-    // Transição suave via CSS keyframe (não interfere com screenshots)
+    // Transição suave via CSS keyframe (não bloqueia screenshots)
     el.classList.remove('page-enter');
     void el.offsetWidth; // força reflow
     el.classList.add('page-enter');
