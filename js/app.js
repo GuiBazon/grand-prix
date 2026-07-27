@@ -1,29 +1,24 @@
 /**
  * app.js — Inicialização da aplicação
- * Cria o namespace Pages e inicia tudo
+ * O namespace Pages é criado em router.js (carregado antes das páginas).
  */
 
-// Namespace para todas as funções de página
-const Pages = {};
-
-// Inicializa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
   // Pré-carrega vozes TTS
   Accessibility.init();
 
-  // Render inicial
-  Router.render();
+  // Aplica preferências salvas antes do primeiro render
+  Accessibility.apply();
 
   // Hook: após cada renderContent, iniciar timers específicos
-  const originalRenderContent = Router.renderContent.bind(Router);
+  const _originalRenderContent = Router.renderContent.bind(Router);
   Router.renderContent = function () {
-    originalRenderContent();
-    // Timer ao vivo de sensores
+    _originalRenderContent();
     if (State.page === 'sensores') {
       Pages._startSensorLive();
     }
   };
 
-  // Render inicial com hook já aplicado
+  // Render inicial
   Router.render();
 });

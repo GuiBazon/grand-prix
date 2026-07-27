@@ -3,13 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="IAP — Inteligência de Acessibilidade Petrobras. Sistema de gestão de demandas de acessibilidade com IA, WCAG 2.1 AA.">
   <title>IAP — Inteligência de Acessibilidade Petrobras</title>
-
-  <!-- ═══════════════════════════════════════════════════════
-       Para trocar o tema (ex: SENAI), edite apenas:
-         1. css/theme.css  — cores e variáveis de marca
-         2. js/config.js   — nome, perfis e dados iniciais
-       ═══════════════════════════════════════════════════════ -->
 
   <!-- CSS: ordem importa (theme → base → components → responsive) -->
   <link rel="stylesheet" href="css/theme.css">
@@ -19,19 +14,26 @@
 </head>
 <body>
 
+  <!-- ── Link de pular para conteúdo (acessibilidade) ── -->
+  <a href="#content" class="skip-link">Pular para o conteúdo principal</a>
+
   <!-- ── Banner de narração ativa ── -->
-  <div id="narr-banner" role="alert" aria-live="polite">
+  <div id="narr-banner" role="status" aria-live="polite" aria-label="Narração ativa">
     <span aria-hidden="true">🔊</span>
-    <span id="narr-text">Narração ativa — lendo conteúdo</span>
-    <button onclick="Accessibility.stop()">Parar</button>
+    <span id="narr-text">Narração ativa — aguardando</span>
+    <button onclick="State.setAcc('narr', false); Router.render();" aria-label="Desativar narração">Parar</button>
   </div>
 
   <!-- ── Topbar ── -->
   <header id="topbar" role="banner">
-    <button id="menu-btn" onclick="UI.toggleSidebar()" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <button id="menu-btn"
+            onclick="UI.toggleSidebar()"
+            aria-label="Abrir menu de navegação"
+            aria-expanded="false"
+            aria-controls="sidebar">☰</button>
 
     <div class="logo-wrap">
-      <div class="logo-icon" id="logo-icon">P</div>
+      <div class="logo-icon" id="logo-icon" aria-hidden="true">P</div>
       <div>
         <div class="logo-text" id="logo-text">IAP · Petrobras</div>
         <div class="logo-sub"  id="logo-sub">Inteligência de Acessibilidade</div>
@@ -41,14 +43,22 @@
     <div class="spacer"></div>
 
     <!-- Seletor de perfil (demo) -->
-    <nav class="ptabs" aria-label="Selecionar perfil">
-      <button class="ptab active" onclick="State.setProfile('funcionario'); this.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')">Funcionário</button>
-      <button class="ptab"        onclick="State.setProfile('gestor');      this.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')">Gestor</button>
-      <button class="ptab"        onclick="State.setProfile('rh');          this.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')">RH</button>
-      <button class="ptab"        onclick="State.setProfile('admin');       this.closest('.ptabs').querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')">Admin</button>
+    <nav class="ptabs" aria-label="Selecionar perfil de demonstração">
+      <button class="ptab active"
+              onclick="State.setProfile('funcionario'); document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
+              aria-pressed="true">Funcionário</button>
+      <button class="ptab"
+              onclick="State.setProfile('gestor');      document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
+              aria-pressed="false">Gestor</button>
+      <button class="ptab"
+              onclick="State.setProfile('rh');          document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
+              aria-pressed="false">RH</button>
+      <button class="ptab"
+              onclick="State.setProfile('admin');       document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active')); this.classList.add('active')"
+              aria-pressed="false">Admin</button>
     </nav>
 
-    <div class="topbar-user" id="topbar-av" title="Perfil do usuário" aria-label="Avatar do usuário">MF</div>
+    <div class="topbar-user" id="topbar-av" aria-label="Usuário: Maria Ferreira">MF</div>
   </header>
 
   <!-- ── Layout ── -->
@@ -58,36 +68,36 @@
   </div>
 
   <!-- ── Overlay mobile ── -->
-  <div id="sidebar-overlay" onclick="UI.toggleSidebar()" aria-hidden="true"></div>
+  <div id="sidebar-overlay"
+       onclick="UI.toggleSidebar()"
+       aria-hidden="true"></div>
 
   <!-- ── Widget LIBRAS ── -->
   <aside id="libras-widget" role="complementary" aria-label="Intérprete de LIBRAS">
     <div class="libras-header">
       <span>🤟 LIBRAS</span>
-      <button onclick="State.setAcc('libras', false)" aria-label="Fechar LIBRAS">✕</button>
+      <button onclick="State.setAcc('libras', false)" aria-label="Fechar widget LIBRAS">✕</button>
     </div>
     <div class="libras-screen" aria-hidden="true">
       <div class="libras-avatar">🧑‍💼</div>
       <div class="libras-sub">Interpretando em LIBRAS...</div>
     </div>
-    <div class="libras-caption" id="libras-caption">Aguardando leitura de tela</div>
+    <div class="libras-caption" id="libras-caption" aria-live="polite">Aguardando leitura de tela</div>
   </aside>
 
   <!-- ── Toast ── -->
-  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- ═══════════════════════════════════════════════
-       JS: ordem de carregamento importa
-       config → state → accessibility → ui → router
-       → pages/* → app (inicializa por último)
-       ═══════════════════════════════════════════════ -->
+  <!-- ── Scripts: ordem importa ──
+       config → state → accessibility → ui → router → pages/* → app
+  ──────────────────────────────────────────────────── -->
   <script src="js/config.js"></script>
   <script src="js/state.js"></script>
   <script src="js/accessibility.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/router.js"></script>
 
-  <!-- Páginas (ordem não importa) -->
+  <!-- Páginas -->
   <script src="js/pages/dash.js"></script>
   <script src="js/pages/demandas.js"></script>
   <script src="js/pages/nova.js"></script>

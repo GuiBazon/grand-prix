@@ -1,15 +1,17 @@
 /**
  * ui.js — Helpers de interface
- * Toast, sidebar mobile, chips, modal genérico
+ * Toast, sidebar mobile, chips, modal genérico.
  */
 
 const UI = {
+  _lastFocused: null,
+
   /** Exibe um toast de notificação */
   toast(msg, type = 'info') {
     const el = document.getElementById('toast');
     if (!el) return;
 
-    el.textContent  = msg;
+    el.textContent = msg;
     el.style.background =
       type === 'ok'  ? 'var(--brand-secondary)' :
       type === 'err' ? '#c0392b'                :
@@ -52,26 +54,72 @@ const UI = {
     el.classList.add('sel');
   },
 
-  /** Cria e exibe um modal. Retorna o elemento criado. */
+  /**
+   * Cria e exibe um modal.
+   * - Remove modal anterior com mesmo id se existir.
+   * - Armazena o elemento que tinha foco para restaurar ao fechar.
+   * - Move o foco para dentro do modal.
+   * - Fecha ao clicar no overlay ou pressionar Escape.
+   */
   openModal(htmlContent, id = 'modal-generic') {
-    // Remove modal existente com mesmo id
     document.getElementById(id)?.remove();
+
+    this._lastFocused = document.activeElement;
 
     const wrap = document.createElement('div');
     wrap.className = 'modal-bg';
     wrap.id        = id;
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
     wrap.innerHTML = `<div class="modal">${htmlContent}</div>`;
 
     // Fecha ao clicar fora
-    wrap.addEventListener('click', e => { if (e.target === wrap) wrap.remove(); });
+    wrap.addEventListener('click', e => { if (e.target === wrap) this.closeModal(id); });
+
+    // Fecha com Escape
+    wrap.addEventListener('keydown', e => {
+      if (e.key === 'Escape') this.closeModal(id);
+      // Armadilha de foco
+      if (e.key === 'Tab') this._trapFocus(e, wrap);
+    });
 
     document.body.appendChild(wrap);
+
+    // Move foco para o primeiro elemento focável dentro do modal
+    requestAnimationFrame(() => {
+      const focusable = wrap.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length > 0) focusable[0].focus();
+    });
+
     return wrap;
   },
 
-  /** Fecha um modal pelo id */
+  /** Fecha um modal pelo id e restaura o foco */
   closeModal(id) {
     document.getElementById(id)?.remove();
+    if (this._lastFocused && typeof this._lastFocused.focus === 'function') {
+      this._lastFocused.focus();
+    }
+  },
+
+  /** Mantém o foco preso dentro do modal (acessibilidade) */
+  _trapFocus(e, container) {
+    const focusable = Array.from(container.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )).filter(el => !el.disabled);
+
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
   },
 
   /** Restaura os controles da página de acessibilidade com os valores do State */

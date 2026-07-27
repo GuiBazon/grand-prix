@@ -9,18 +9,19 @@
  */
 
 const APP = {
-  name:      'IAP · Petrobras',
-  subtitle:  'Inteligência de Acessibilidade',
+  name:       'IAP · Petrobras',
+  subtitle:   'Inteligência de Acessibilidade',
   logoLetter: 'P',
-  version:   '2.0',
+  version:    '2.0',
 };
 
 const PROFILES = {
   funcionario: {
-    name: 'Maria Ferreira',
+    name:     'Maria Ferreira',
     initials: 'MF',
-    role: 'Funcionária · Engenharia',
-    avClass: 'av-blue',
+    role:     'Funcionária · Engenharia',
+    setor:    'Engenharia',
+    avClass:  'av-blue',
     nav: [
       { ico: '🏠', label: 'Início',          page: 'dash' },
       { ico: '📋', label: 'Minhas demandas', page: 'demandas', badge: 2 },
@@ -30,10 +31,11 @@ const PROFILES = {
     ],
   },
   gestor: {
-    name: 'Carlos Lima',
+    name:     'Carlos Lima',
     initials: 'CL',
-    role: 'Gestor · Operações',
-    avClass: 'av-green',
+    role:     'Gestor · Operações',
+    setor:    'Operações',
+    avClass:  'av-green',
     nav: [
       { ico: '📊', label: 'Painel do setor', page: 'dash' },
       { ico: '📋', label: 'Demandas',        page: 'demandas', badge: 5 },
@@ -43,10 +45,11 @@ const PROFILES = {
     ],
   },
   rh: {
-    name: 'Ana Paula',
+    name:     'Ana Paula',
     initials: 'AP',
-    role: 'Analista · RH',
-    avClass: 'av-yellow',
+    role:     'Analista · RH',
+    setor:    'RH',
+    avClass:  'av-yellow',
     nav: [
       { ico: '👥', label: 'Painel RH',       page: 'dash' },
       { ico: '📋', label: 'Todas demandas',  page: 'demandas' },
@@ -56,10 +59,11 @@ const PROFILES = {
     ],
   },
   admin: {
-    name: 'Roberto Souza',
+    name:     'Roberto Souza',
     initials: 'RS',
-    role: 'Administrador · TI',
-    avClass: 'av-dark',
+    role:     'Administrador · TI',
+    setor:    'TI',
+    avClass:  'av-dark',
     nav: [
       { ico: '🖥️', label: 'Visão geral',     page: 'dash' },
       { ico: '📡', label: 'Sensores IoT',    page: 'sensores' },

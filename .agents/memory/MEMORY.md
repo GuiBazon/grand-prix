@@ -1,0 +1,1 @@
+- [Pages namespace bug](pages-namespace.md) — `const Pages = {}` must live in `router.js`, not `app.js`, because page scripts load before `app.js`.

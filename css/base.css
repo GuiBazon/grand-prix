@@ -5,7 +5,24 @@
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 100%; }   /* controlado por JS via --fscale */
+html { font-size: 100%; }   /* controlado por JS (font scale) */
+
+/* ── Skip link (acessibilidade) ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 8px;
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 0 0 8px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.15s;
+}
+.skip-link:focus { top: 0; }
 
 body {
   font-family: "Segoe UI", system-ui, sans-serif;
@@ -172,6 +189,14 @@ body {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+}
+
+@keyframes pageEnter {
+  from { transform: translateY(8px); }
+  to   { transform: translateY(0); }
+}
+#content.page-enter {
+  animation: pageEnter 0.18s ease out;
 }
 
 /* ── Overlay mobile ── */
