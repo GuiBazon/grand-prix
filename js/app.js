@@ -88,6 +88,13 @@ async function _fazerLogin(event) {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ email, senha }),
     });
+
+    // Garante que a resposta é JSON antes de parsear
+    const contentType = resp.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+    }
+
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.erro || 'Erro ao entrar');
 
